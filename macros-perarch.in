@@ -1,0 +1,8 @@
+# Per-platform rpm configuration file.
+# $Id: macros-perarch.in 272023 2011-02-25 02:40:21Z peroyvind $
+
+#==============================================================================
+# ---- per-platform macros.
+#
+%optflags		@RPMOPTFLAGS@
+

@@ -1,0 +1,44 @@
+#!/usr/bin/perl
+#####################################################################
+#                                                                   #
+# Check system dependences between php-pear modules                 #
+#                                                                   #
+# Pawe³ Go³aszewski <blues@ds.pg.gda.pl>                            #
+# Micha³ Moskal <malekith@pld-linux.org>                            #
+# ------------------------------------------------------------------#
+# TODO:                                                             #
+#####################################################################
+
+$pear = "/usr/share/pear";
+@files = ();
+
+
+if ("@ARGV") {
+  foreach (@ARGV) {
+    process_file($_);
+  }
+} else {
+
+  # notice we are passed a list of filenames NOT as common in unix the
+  # contents of the file.
+
+  foreach (<>) {
+    chomp $_;
+    process_file($_);
+  }
+}
+
+f: for $f (sort keys %req) {
+	print "pear($f)\n";
+}
+
+exit(0);
+
+sub process_file() {
+	my ($f) = @_;
+	return unless ($f =~ /$pear.*\.php$/);
+
+	$f =~ s/.*$pear\///;
+	push @files, $f;
+	$req{$f} = 1;
+}

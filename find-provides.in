@@ -1,0 +1,139 @@
+#!/bin/bash
+
+# This script reads filenames from STDIN and outputs any relevant provides
+# information that needs to be included in the package.
+
+filelist=`sed "s/['\"]/\\\&/g"`
+
+solist=$(echo "$filelist" | egrep -v "^/lib/ld\.so|/usr/lib(64)?/gcj/" | egrep '(/usr(/X11R6)?)?/lib(64)?/.*\.so' | \
+	xargs file -L 2>/dev/null | grep "ELF.*shared object" | cut -d: -f1)
+pythonlist=
+tcllist=
+rubygemlist=`echo "$filelist"| grep -e "\.gemspec$" -e "\.rb$" -e "/usr/lib/ruby"`
+
+#
+# --- Alpha does not mark 64bit dependencies
+case `uname -m` in
+  alpha*)	mark64="" ;;
+  *)		mark64="()(64bit)" ;;
+esac
+
+#
+# --- Library sonames and weak symbol versions (from glibc).
+for f in $solist; do
+    soname=$(objdump -p $f 2>/dev/null | awk '/SONAME/ {print $2}')
+
+    lib64=`if file -L $f 2>/dev/null | \
+	grep "ELF 64-bit" >/dev/null; then echo "$mark64"; fi`
+    if [ "$soname" != "" ]; then
+	if [ ! -L $f ]; then
+	    echo $soname$lib64
+	    objdump -p $f 2>/dev/null | awk '
+		BEGIN { START=0 ; }
+		/Version definitions:/ { START=1; }
+		/^[0-9]/ && (START==1) { print $4; }
+		/^$/ { START=0; }
+	    ' | \
+		grep -v $soname | \
+		while read symbol ; do
+		    echo "$soname($symbol)`echo $lib64 | sed 's/()//'`"
+		done
+	fi
+    else
+	echo ${f##*/}$lib64
+    fi
+done | sort -u
+
+#
+# --- font provides from rpm.org
+[ -x @RPMVENDORDIR@/fontconfig.prov ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMVENDORDIR@/fontconfig.prov | sort -u
+
+#
+# --- mimehandler provides from rpm.org
+[ -x @RPMVENDORDIR@/desktop-file.prov ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMVENDORDIR@/desktop-file.prov | sort -u
+
+#
+# --- If libperl.so is found in buildroot, we provide perl(abi) = <version>
+if [ -n "`echo $filelist | grep -e '/CORE/libperl\.so'`" ]; then
+    for i in $filelist; do
+	if [ -n "`echo $i | grep -e '/CORE/libperl\.so\$'`" ]; then
+	    perlpath=$i
+	    version=`perl -I"$perlpath" -MConfig -e 'print $Config{version}'`
+	    [ $? == 0 ] && echo "perl(abi) = $version"
+	fi
+    done
+fi
+
+#
+# --- Perl modules.
+[ -x @RPMVENDORDIR@/perl.prov ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMVENDORDIR@/perl.prov | grep 'perl(' | sort -u
+
+#
+# --- Python modules.
+[ -x @RPMLIBDIR@/pythoneggs.py -a -n "$filelist" ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/pythoneggs.py --provides | sort -u
+
+#
+# --- Tcl modules.
+#[ -x @RPMLIBDIR@/tcl.prov -a -n "$tcllist" ] &&
+#    echo "$tcllist" | tr '[:blank:]' \\n | @RPMLIBDIR@/tcl.prov | sort -u
+
+#
+# --- Php modules.
+[ -x @RPMVENDORDIR@/php.prov ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMVENDORDIR@/php.prov | sort -u
+
+#
+# --- Kernel modules.
+[ -x @RPMLIBDIR@/kmod-deps.sh ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/kmod-deps.sh --provides| sort -u
+
+#
+# --- Pkgconfig deps
+[ -x @RPMLIBDIR@/pkgconfigdeps.sh ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/pkgconfigdeps.sh -P | sort -u
+
+if [ -n "$LIBTOOLDEP" ]; then
+#
+# --- libtooldep deps
+[ -x @RPMLIBDIR@/libtooldeps.sh ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/libtooldeps.sh -P | sort -u
+
+fi
+
+#
+# --- Ruby gems
+[ -x @RPMLIBDIR@/rubygems.rb -a -n "$rubygemlist" ] &&
+    echo $rubygemlist | tr '[:blank:]' \\n | @RPMLIBDIR@/rubygems.rb --provides | sort -u
+
+#
+# --- .so files.
+for i in `echo $filelist | tr '[:blank:]' "\n" | egrep '(/usr(/X11R6)?)?/lib(|64)(/gcc(-lib)?/.+)?/[^/]+\.so$'`; do
+    objd=`objdump -p ${i} | grep SONAME`
+    [ -h ${i} -a -n "${objd}" ] && \
+    lib64=`if file -L $i 2>/dev/null | grep "ELF 64-bit" >/dev/null; then echo "(64bit)"; fi` && \
+    echo ${objd} | perl -p -e "s/.*SONAME\s+(\S+)\.so.*/devel(\1$lib64)/g"
+done | sort -u
+
+#
+# --- mono provides
+if [ -x /usr/bin/mono-find-provides ]; then
+echo $filelist | tr '[:blank:]' '\n' | /usr/bin/mono-find-provides
+fi
+
+
+#
+# --- haskell provides
+if [ -x /usr/bin/haskell-find-provides ]; then
+echo $filelist | tr '[:blank:]' '\n' | /usr/bin/haskell-find-provides
+fi
+
+#
+# --- gstreamer modules.
+[ -x @RPMLIBDIR@/gstreamer.sh ] &&
+    echo "$solist" | tr '[:blank:]' \\n | @RPMLIBDIR@/gstreamer.sh --provides | sort -u
+
+exit 0

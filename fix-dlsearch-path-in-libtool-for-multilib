@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# If configure was generated with libtool that did not have support for
+# run-time library search path (sys_lib_dlsearch_path_spec) autodetection,
+# we replace the hardcoded search path with "/usr/%{_lib} /%{_lib}".
+
+# Our libtool has autodetection in form of lib64.patch, though it does not
+# handle cases (e.g. Debian) where /usr/lib is valid for multilib archs.
+
+# Without the correct search path defined, binaries would wrongly get rpath even
+# when the libraries are located in a standard directory.
+
+CONFIGURE_TOP="${1:-.}"
+LIB="${2:-lib}"
+if [ -e $CONFIGURE_TOP/configure ] && grep -q 'sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra"' $CONFIGURE_TOP/configure; then
+  echo "Forcing run-time library search path definition in configure to prevent libtool from adding rpath for standard directories (configure was generated with libtool without support for autodetection)"
+
+  sed -i \
+   -e "s,^[ \t]*# Append ld.so.conf contents to the search path,  sys_lib_dlsearch_path_spec=\"/usr/${LIB} /${LIB}\"\n\0," \
+   -e 's,sys_lib_dlsearch_path_spec="/lib /usr/lib $lt_ld_extra",sys_lib_dlsearch_path_spec="$sys_lib_dlsearch_path_spec $lt_ld_extra",' \
+   $CONFIGURE_TOP/configure
+fi
+

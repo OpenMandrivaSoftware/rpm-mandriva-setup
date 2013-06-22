@@ -1,0 +1,103 @@
+# $Id: rpmrc.in 272224 2011-04-05 18:59:15Z peroyvind $
+#
+# @RPMVENDORDIR@/rpmrc
+
+#############################################################
+# Values for RPM_OPT_FLAGS for various platforms
+
+optflags: i386 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=i386 -fasynchronous-unwind-tables
+optflags: i486 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=i486 -fasynchronous-unwind-tables
+optflags: k6   %{__common_cflags_with_ssp} -fomit-frame-pointer -march=k6 -fasynchronous-unwind-tables
+optflags: i586 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=i586 -mtune=generic -fasynchronous-unwind-tables
+optflags: i686 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=i686 -fasynchronous-unwind-tables
+optflags: athlon %{__common_cflags_with_ssp} -fomit-frame-pointer -march=athlon -fasynchronous-unwind-tables
+optflags: pentium3 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=pentium3 -fasynchronous-unwind-tables
+optflags: pentium4 %{__common_cflags_with_ssp} -fomit-frame-pointer -march=pentium4 -fasynchronous-unwind-tables
+
+optflags: x86_64 %{__common_cflags_with_ssp} -fPIC
+optflags: amd64 %{__common_cflags_with_ssp} -fPIC
+optflags: ia32e %{__common_cflags_with_ssp} -fPIC
+
+optflags: ia64 %{__common_cflags}
+  
+  # XXX Please note that -mieee has been added in rpm-3.0.5.
+optflags: alpha %{__common_cflags} -mieee -mcpu=ev5
+optflags: alphaev5 %{__common_cflags} -mieee -mcpu=ev5
+optflags: alphaev56 %{__common_cflags} -mieee -mcpu=ev56
+optflags: alphapca56 %{__common_cflags} -mieee -mcpu=pca56
+optflags: alphaev6 %{__common_cflags} -mieee -mcpu=ev6
+optflags: alphaev67 %{__common_cflags} -mieee -mcpu=ev67
+
+optflags: sparc %{__common_cflags} -m32 -mtune=ultrasparc
+optflags: sparcv9 %{__common_cflags} -m32 -mcpu=ultrasparc
+optflags: sparc64 %{__common_cflags} -m64 -mcpu=ultrasparc
+
+optflags: m68k %{__common_cflags} -fomit-frame-pointer
+
+optflags: ppc %{__common_cflags_with_ssp} -fsigned-char -mcpu=750 -mtune=7450
+optflags: ppciseries %{__common_cflags_with_ssp} -fsigned-char
+optflags: ppcpseries %{__common_cflags_with_ssp} -fsigned-char
+optflags: ppc32 %{__common_cflags_with_ssp} -m32 -fsigned-char -mcpu=power4 -mtune=cell
+optflags: ppc64 %{__common_cflags_with_ssp} -m64 -fsigned-char -mcpu=power4 -mtune=cell
+
+optflags: parisc %{__common_cflags} -mpa-risc-1-0
+optflags: hppa1.0 %{__common_cflags} -mpa-risc-1-0
+optflags: hppa1.1 %{__common_cflags} -mpa-risc-1-0
+optflags: hppa1.2 %{__common_cflags} -mpa-risc-1-0
+optflags: hppa2.0 %{__common_cflags} -mpa-risc-1-0
+
+optflags: mips %{__common_cflags}
+optflags: mipsel %{__common_cflags}
+
+optflags: armv3l %{__common_cflags} -fsigned-char -fomit-frame-pointer -march=armv3
+optflags: armv4b %{__common_cflags} -fsigned-char -fomit-frame-pointer -march=armv4
+optflags: armv4l %{__common_cflags} -fsigned-char -fomit-frame-pointer -march=armv4
+
+optflags: atarist %{__common_cflags} -fomit-frame-pointer
+optflags: atariste %{__common_cflags} -fomit-frame-pointer
+optflags: ataritt %{__common_cflags} -fomit-frame-pointer
+optflags: falcon %{__common_cflags} -fomit-frame-pointer
+optflags: atariclone %{__common_cflags} -fomit-frame-pointer
+optflags: milan %{__common_cflags} -fomit-frame-pointer
+optflags: hades %{__common_cflags} -fomit-frame-pointer
+
+optflags: s390 %{__common_cflags_with_ssp}
+optflags: s390x %{__common_cflags_with_ssp}
+
+#############################################################
+# Canonical arch names and numbers
+
+arch_canon:	sparc64:sparc64 10
+arch_canon:	sun4u:	sparc64 10
+
+arch_canon:	x86_64:	x86_64	19
+
+#############################################################
+# Canonical OS names and numbers
+
+#############################################################
+# For a given uname().machine, the default build arch
+
+buildarchtranslate: athlon: i586
+buildarchtranslate: pentium4: i586
+buildarchtranslate: pentium3: i586
+buildarchtranslate: i686: i586
+buildarchtranslate: k6: i586
+buildarchtranslate: i586: i586
+buildarchtranslate: i486: i486
+buildarchtranslate: i386: i386
+buildarchtranslate: i386: i386
+
+#############################################################
+# Architecture compatibility
+
+arch_compat: k6: i586
+
+arch_compat: osfmach3_i686: i686 osfmach3_i586
+arch_compat: osfmach3_i586: i586 osfmach3_i486
+arch_compat: osfmach3_i486: i486 osfmach3_i386
+arch_compat: osfmach3_i386: i486
+
+buildarch_compat: k6: i486
+
+macrofiles: @RPMLIBDIR@/macros:@RPMLIBDIR@/%{_target}/macros:@RPMVENDORDIR@/macros:@RPMVENDORDIR@/%{_target}/macros:@RPMSYSCONFDIR@/macros:@RPMSYSCONFDIR@/%{_target}/macros:@RPMSYSCONFDIR@/macros.cdb:@RPMSYSCONFDIR@/macros.d/*.macros:~/.rpmmacros

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# replaces
+#	  tmp_sharedflag='-shared' ;;
+# with
+# 	  tmp_sharedflag='-shared -Wl,--as-needed' ;;
+#
+# since passing -Wl,--as-needed is not enough because libtool moves it
+# after *.o and libs
+
+if [ -e configure ]; then
+   echo "Forcing -Wl,--as-needed in configure/libtool to workaround libtool bug (cf http://lists.gnu.org/archive/html/libtool-patches/2004-06/msg00002.html)"
+   sed -i "s/^\([ \t]*tmp_sharedflag\)='-shared'/\1='-shared -Wl,--as-needed'/" configure
+fi

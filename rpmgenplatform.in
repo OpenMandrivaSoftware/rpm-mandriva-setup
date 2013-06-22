@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+
+# $Id$
+use strict;
+use warnings;
+use Getopt::Long;
+
+GetOptions(
+    'o=s' => \my $output,
+);
+
+my @ALLARCH=qw{
+    noarch
+    @RPMALLARCH@
+};
+
+my $anysuffix = '-.*-@RPMOS@';
+my $suffix = '-@RPMCANONVENDOR@-@RPMOS@-gnu';
+my $canonarch = $ARGV[0] || `uname -m`;
+chomp($canonarch);
+
+my $houtput;
+if ($output && $output ne '-') {
+    open($houtput, '>', $output) or die "Cannot open `$output': $!\n";
+} else {
+    $houtput = *STDOUT;
+}
+
+foreach my $suf ($suffix, $anysuffix) {
+    my $found = 0;
+    my %done = ();
+    foreach my $arch (reverse @ALLARCH) {
+        $arch eq $canonarch and $found = 1;
+        $found or next;
+        $done{$arch} and next;
+        $done{$arch} = 1;
+        print $houtput "$arch$suf\n";
+    }
+}
+
+close($houtput) if ($houtput);

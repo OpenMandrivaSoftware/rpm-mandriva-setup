@@ -1,0 +1,74 @@
+#!/bin/sh
+
+# $Id: make_arch_macrosfiles.sh.in 233560 2008-01-29 15:58:29Z pixel $
+
+MINPUT="$1"
+ARCH="$2"
+
+LIB=lib
+OS=@RPMOS@
+OPTFLAGS=`perl -ane "m/^optflags:\s*${ARCH}\b\s*(.*)/ and print \\$1" < rpmrc`
+MULTILIBNO=
+
+case $ARCH in
+    i*86|k6|athlon|pentium*)
+    MULTILIBNO=1
+    CANONARCH=i386
+    ;;
+    amd64|x86_64)
+    MULTILIBNO=2
+    CANONARCH=x86_64
+    LIB=lib64
+    ;;
+    sparc|sparcv9)
+    MULTILIBNO=1
+    CANONARCH=sparc
+    ;;
+    sparc64)
+    MULTILIBNO=2
+    CANONARCH=sparc64
+    LIB=lib64
+    ;;
+    ppc|powerpc|ppc32)
+    MULTILIBNO=1
+    CANONARCH=ppc
+    ;;
+    ppc64|powerpc64)
+    MULTILIBNO=2
+    CANONARCH=ppc64
+    LIB=lib64
+    ;;
+    alpha)
+    CANONARCH=alpha
+    ;;
+    s390)
+    CANONARCH=s390-linux
+    MULTILIBNO=1
+    ;;
+    s390x)
+    CANONARCH=s390x
+    LIB=lib64;
+    MULTILIBNO=2 ;;
+    *)
+    CANONARCH=$ARCH
+    LIB=lib
+    ;;
+esac
+
+if [ -n "$MULTILIBNO" ]; then
+    MULTILIBSED='-e /^@MULTILIB/d -e s,@MULTILIBNO@,'$MULTILIBNO,
+else
+    MULTILIBSED='-e /^@MULTILIBSTART@/,/^@MULTILIBEND@/d'
+fi
+
+if [ -n "$OPTFLAGS" ]; then
+    OPTFLAGSSED="s/@RPMOPTFLAGS@/${OPTFLAGS}/g"
+else
+    OPTFLAGSSED='s,^%optflags.*,,'
+fi
+
+cat "$MINPUT" | sed \
+    -e "s,@RPMARCH@,$CANONARCH,g" \
+    -e "s,@LIB@,$LIB,g" \
+    -e "$OPTFLAGSSED" \
+    $MULTILIBSED

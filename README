@@ -1,0 +1,37 @@
+rpm-mandriva-setup
+$Id: README 22754 2007-02-22 13:03:02Z nanardon $
+
+This package contains configuration and script for the mandriva rpm.
+
+Some file come from .in, this allow to transform path for testing purpose.
+If your file or script contains path, you should make a .in files.
+
+* About macros:
+Only redefine macros in this package if the rpm one does not please to you.
+
+All macros having same body should go into macros.in.
+If the macros body change:
+- add a symbolic value into macros-perarch.in (@foo@)
+- add the value into make_macrosfiles.sh.in
+
+Example:
+%_libdir /use/%_lib => macros.in
+%_lib lib|lib64 => macros-perarch.in
+
+* Testing the monster
+
+o First and easy way:
+$ make test
+
+o Live tests:
+
+$ ./configure --with-rpmconfdir=$fakeroot --with-rpmlibdir=/usr/lib/rpm --with-rpmsysconfdir=/etc
+
+This will configure the package for an installation into fakeroot, using rpm files in /usr/lib/rpm.
+$ make
+$ make install
+
+Now we can say to rpm to use fake config:
+rpm --rcfile $fakeroot/mandriva/rpmrc other command...
+
+Happy Hacking

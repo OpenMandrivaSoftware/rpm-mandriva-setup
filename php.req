@@ -1,0 +1,108 @@
+#!/usr/bin/perl
+#####################################################################
+#                                                                   #
+# Check system dependences between php-pear modules                 #
+#                                                                   #
+# Pawe³ Go³aszewski <blues@ds.pg.gda.pl>                            #
+# Micha³ Moskal <malekith@pld-linux.org>                            #
+# ------------------------------------------------------------------#
+# TODO:                                                             #
+# - extension_loaded - dependencies.                                #
+# - some clean-up...                                                #
+#####################################################################
+
+$pear = "/usr/share/pear";
+
+@files = ();
+%req = ();
+
+if ("@ARGV") {
+  foreach (@ARGV) {
+    process_file($_);
+  }
+} else {
+
+  # notice we are passed a list of filenames NOT as common in unix the
+  # contents of the file.
+
+  foreach (<>) {
+    chomp $_;
+    process_file($_);
+  }
+}
+
+f: for $f (keys %req) {
+	for $g (@files) { next f if ($g =~ /\Q$f\E$/); }
+	print "pear($f)\n";
+}
+
+exit(0);
+
+sub process_file() {
+	my ($f) = @_;
+	push @files, $f;
+
+	# skip non-php files
+	next unless ($f =~ /\.php$/);
+
+	if (!open(F, $f)) {
+		warn("$0: Warning: Could not open file '$f' for reading: $!\n");
+		return;
+	}
+
+	if ($f =~ /$pear/) {
+		$file_dir = $f;
+		$file_dir =~ s|.*$pear/||;
+		$file_dir =~ s|/[^/]*$||;
+	} else {
+		$file_dir = undef;
+	}
+
+	while (<F>) {
+		# skip comments
+		next if (/^\s*(#|\/\/|\*|\/\*)/);
+		while (/(\W|^)(require|include)(_once)?
+			  \s* \(? \s* ("([^"]*)"|'([^']*)') 
+			  \s* \)? \s* ;/xg) {
+
+			if ($5 ne "") {
+				$x = $5;
+			} elsif ($6 ne "") {
+				$x = $6;
+			} else {
+				next;
+			}
+			$x =~ s/\/\.?\//\//g while $x =~ /\/\.?\//;
+			$x =~ s/(\/|^)[^\/]*[^.]\/\.\.\//\1/g while $x =~ /(\/|^)[^\/]*[^.]\/\.\.\//;
+			next if ($x =~ m|^\.\.?/| or $x =~ /\$/);
+			next unless ($x =~ /\.php$/);
+			$req{$x} = 1;
+		}
+
+		next unless (defined $file_dir);
+
+		while (/(\W|^)(require|include)(_once)?
+			  \s* \(? \s* dirname \s* \( \s* __FILE__ \s* \) \s* \. \s*
+			  ("([^"]*)"|'([^']*)') 
+			  \s* \)? \s* ;/xg) {
+			if ($5 ne "") {
+				$x = $5;
+			} elsif ($6 ne "") {
+				$x = $6;
+			} else {
+				next;
+			}
+
+			next unless ($x =~ /\.php$/);
+
+			$x = "$file_dir/$x";
+			$x =~ s/\/\.?\//\//g while $x =~ /\/\.?\//;
+			$x =~ s/(\/|^)[^\/]*[^.]\/\.\.\//\1/g while $x =~ /(\/|^)[^\/]*[^.]\/\.\.\//;
+			$req{$x} = 1;
+		}
+	}
+
+	close(F) ||
+	die("$0: Could not close file: '$f' : $!\n");
+
+}

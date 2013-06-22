@@ -1,0 +1,6 @@
+Basic instructions to build :
+    aclocal
+    libtoolize
+    automake -a
+    autoconf
+    ./configure

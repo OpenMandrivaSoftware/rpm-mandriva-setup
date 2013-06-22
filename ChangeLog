@@ -1,0 +1,2505 @@
+2011-12-11 08:24  peroyvind
+
+	* NEWS, configure.ac, find-requires.in: "resolve" /bin/env foo
+	  interpreter to actual path, rather than generating
+	  dependencies on coreutils, should trim off ~800 dependencies more
+
+2011-12-11 06:57  peroyvind
+
+	* NEWS, find-requires.in: drop automatically generated dependencies
+	  on interpreters we either don't
+	  need dependencies on or that we have other dedicated dependency
+	  generators
+	  for making them duplicate, reducing another ~5K packages'
+	  dependencies at
+	  next rebuild.
+
+2011-12-11 06:24  peroyvind
+
+	* NEWS, configure.ac, find-requires.in: drop automatically
+	  generated rtld(GNU_HASH) dependencies, it's been provided
+	  by glibc for five years now and can safely be assumed that
+	  there's no longer
+	  any need for it, reducing ~5K packages' dependency on it during
+	  next rebuild.
+
+2011-11-24 15:09  peroyvind
+
+	* Makefile.am, NEWS: move remaining macros to rpm package
+
+2011-11-24 13:23  peroyvind
+
+	* NEWS, configure.ac, find-requires.in: drop generating
+	  dependencies on packages for triggers, these will be fired
+	  when packages gets installed at later time anyways
+
+2011-11-17 14:44  peroyvind
+
+	* Makefile.am, NEWS, build.macros.in, configure.ac,
+	  drop-ld-no-undefined-for-shared-lib-modules-in-libtool,
+	  fix-dlsearch-path-in-libtool-for-multilib,
+	  fix-libtool-from-moving-options-after-libs,
+	  fix-libtool-ltmain-from-overlinking,
+	  force-as-needed-for-shared-lib-in-libtool: merge scripts and
+	  parts of macros from rpm-manbo-setup package
+
+2011-11-17 14:12  peroyvind
+
+	* Makefile.am, pkgconfigdeps.sh: drop pkgconfigdeps.sh
+
+2011-11-17 13:46  peroyvind
+
+	* Makefile.am, NEWS, brp-compress, brp-strip,
+	  brp-strip-comment-note, brp-strip-static-archive: drop
+	  brp-compress, brp-strip, brp-strip-comment-note &
+	  brp-strip-static-archive
+
+2011-11-11 12:54  peroyvind
+
+	* Makefile.am, tests/findlang.pl, tests/findlang.sh: remove tests
+	  for find-lang.pl
+
+2011-11-11 10:34  peroyvind
+
+	* NEWS, build.macros.in: drop python macros that's now part of rpm
+	  upstream.
+
+2011-11-11 10:15  peroyvind
+
+	* Makefile.am, NEWS, build.macros.in: drop using our own
+	  find-lang.pl as well, use find-lang.sh distributed with rpm in
+	  stead.
+
+2011-11-11 09:56  peroyvind
+
+	* Makefile.am, NEWS, build.macros.in, configure.ac: drop using our
+	  own version of find-debuginfo.sh, our changes has now been merged
+	  upstream.
+
+2011-07-14 10:27  peroyvind
+
+	* NEWS, configure.ac, find-debuginfo.sh: add a
+	  EXCLUDE_FROM_FULL_STRIP environment variable to
+	  find-debuginfo.sh, so
+	  that we can exclude files from being completely stripped, but for
+	  their
+	  debugging symbols.
+
+2011-07-14 10:22  peroyvind
+
+	* Makefile.am, kmod.prov: remove kmod.prov again now that it's
+	  replacement is actually shipped with rpm5 upstream
+
+2011-06-22 14:56  eugeni
+
+	* NEWS: updated NEWS
+
+2011-06-22 14:51  eugeni
+
+	* Makefile.am, kmod.prov: Bring back kmod.prov because rpm5 does
+	  not handles dkms
+
+2011-06-17 13:14  peroyvind
+
+	* NEWS, find-provides.in: fix perl path detection for perl(abi)
+	  provides
+
+2011-06-07 16:01  peroyvind
+
+	* NEWS, find-provides.in: generate a perl(abi) = <version> provide
+	  when libperl.so is found
+
+2011-06-07 14:58  peroyvind
+
+	* find-requires.in: change dependency on 'perl(abi) = <version>' to
+	  'perl(abi) >= <version>' as it
+	  supports loading modules from older versions as well
+
+2011-06-07 14:07  peroyvind
+
+	* NEWS: update for perl dependency change in previous commit
+
+2011-06-07 14:07  peroyvind
+
+	* find-requires.in: no sense in keeping perlapi-<version> requires,
+	  confused with provides..
+
+2011-06-07 14:02  peroyvind
+
+	* find-requires.in: be sure to escape perl(abi) dependency due to
+	  '(' & ')' characters used
+
+2011-06-07 13:58  peroyvind
+
+	* NEWS, find-provides.in, find-requires.in: use pkgconfigdeps.sh
+	  from rpm5.org upstream as well
+
+2011-06-07 13:20  peroyvind
+
+	* Makefile.am, kmod.prov, pythoneggs.py, rubygems.rb: drop
+	  dependency extractors that we're now using the rpm5.org upstream
+	  versions of
+
+2011-06-07 12:58  peroyvind
+
+	* Makefile.am, NEWS, configure.ac: only generate platform macros if
+	  explicitly enabled
+
+2011-06-07 09:33  peroyvind
+
+	* NEWS, find-requires.in: make perl provide perl(abi) = <version>
+	  rather than perlapi-<version> (latter is kept for compatibility
+	  for now)
+
+2011-06-07 09:28  peroyvind
+
+	* NEWS, configure.ac, find-provides.in, find-requires.in: use
+	  python, ruby, kernel module & gstreamer dependency extractors
+	  from rpm5.org upstream
+
+2011-05-27 08:01  peroyvind
+
+	* configure.ac: compress with xz by default
+
+2011-05-27 07:59  peroyvind
+
+	* NEWS, configure.ac, find-requires.in: remove dead perl-base
+	  dependency and broken epoch hack polluting with tons of errors
+	  from sed
+
+2011-05-17 03:37  fwang
+
+	* Makefile.am, NEWS, configure.ac, desktop-file.prov,
+	  find-provides.in, fontconfig.prov: 1.127: add desktop-file.prov
+	  and fontconfig.prov from rpm.org
+
+2011-05-09 14:38  peroyvind
+
+	* NEWS, configure.ac, macros.in: revert _host full triplet, due to
+	  lack of testing and breakage (#63234)
+
+2011-05-06 01:41  fwang
+
+	* NEWS, configure.ac, find-requires.in: 1.125: fix script file
+	  filtering, according to latest changes in file command
+
+2011-05-05 12:53  fwang
+
+	* NEWS, configure.ac, find-requires.in: 1.1.124: fix trigger
+	  requirements helpers
+
+2011-05-04 17:12  peroyvind
+
+	* NEWS, macros.in: fix _host to have full host triplet, in order to
+	  unbreak arm
+
+2011-05-04 17:12  peroyvind
+
+	* NEWS, pkgconfigdeps.sh: merge updated pkgconfigdeps.sh script
+	  from mageia
+
+2011-05-04 17:06  peroyvind
+
+	* NEWS, find-requires.in: idrop autogenerated dependencies on
+	  multiarch-utils as it's now merged with rpm
+
+2011-05-04 17:06  peroyvind
+
+	* NEWS, find-requires.in: autogenerate dependencies on various
+	  packages required for triggers
+
+2011-05-04 17:01  peroyvind
+
+	* NEWS, configure.ac, find-debuginfo.sh: strip kernel modules also
+	  even if executable bit isn't set
+
+2011-04-18 23:17  peroyvind
+
+	* NEWS, configure.ac, pythoneggs.py: pick up python(abi) version
+	  from python path only when adding requires
+
+2011-04-05 18:59  peroyvind
+
+	* NEWS, configure.ac, rpmrc.in: revert compiler optimization
+	  disablers now fixed in gcc 4.6.0 (#62900)
+
+2011-03-31 01:15  peroyvind
+
+	* NEWS, build.macros.in, configure.ac: revert removal of %with
+	  macros which broke stuff..
+
+2011-03-30 20:46  peroyvind
+
+	* configure.ac: bump version
+
+2011-03-30 20:46  peroyvind
+
+	* NEWS, rpmrc.in: temporarily disable certain compiler
+	  optimizations on x86_64 (#62900)
+
+2011-03-30 20:45  peroyvind
+
+	* NEWS, rpmrc.in: build with -fPIC on x86_64 (#62900)
+
+2011-02-25 02:40  peroyvind
+
+	* Makefile.am, NEWS, build.macros.in, gem_helper.rb,
+	  macros-perarch.in, macros.in: start on dropping macros and
+	  functionality that's either deprecated or merged with rpm5
+	  upstream since, first step in phasing out rpm-setup...
+
+2011-02-13 04:40  fwang
+
+	* NEWS: really fix icon cache macro
+
+2011-02-13 04:32  fwang
+
+	* build.macros.in, configure.ac: really fix icon cache macro
+
+2011-02-11 22:19  peroyvind
+
+	* NEWS, build.macros.in, configure.ac: reenable %clean_icon_cache &
+	  %update_icon_cache macros so that they can be used in rpm5 file
+	  triggers (#62469)
+
+2011-02-11 21:18  peroyvind
+
+	* NEWS, configure.ac, kmod.prov: replace EVR separator characters
+	  (':' & '-') in kmod provides with '_' so that kmod() provides
+	  gets valid EVR (#62472)
+
+2011-01-25 05:45  peroyvind
+
+	* NEWS, configure.ac, pythoneggs.py: fix pythonegg dependencies to
+	  always be lower case (#62883)
+
+2010-12-13 14:28  peroyvind
+
+	* configure.ac: bump version
+
+2010-12-13 14:26  peroyvind
+
+	* NEWS, macros.in: drop our own re-definition of %_query_all_fmt in
+	  favor of upstream default to get disttag, distepoch & arch in
+	  query results.
+
+2010-12-09 22:20  shikamaru
+
+	* rubygems.rb: - use symbol, not string for the gee dependency type
+	  comparison
+
+2010-12-09 20:23  shikamaru
+
+	* NEWS, rubygems.rb: - only add runtime dependencies in rubygems.rb
+
+2010-11-04 10:43  fwang
+
+	* configure.ac: bump version
+
+2010-11-04 01:39  fwang
+
+	* NEWS: add NEWS
+
+2010-11-02 03:47  fwang
+
+	* find-provides.in: find gstreamer provides
+
+2010-11-01 23:20  peroyvind
+
+	* Makefile.am, NEWS, configure.ac, find-provides.in,
+	  find-requires.in: enable python egg provides/requires
+
+2010-11-01 23:14  peroyvind
+
+	* pythoneggs.py: add encoding type
+
+2010-11-01 22:59  peroyvind
+
+	* pythoneggs.py: add documentation
+
+2010-11-01 22:34  peroyvind
+
+	* pythoneggs.py: add strict version requires on python version
+
+2010-10-31 18:06  peroyvind
+
+	* pythoneggs.py: * don't add redundant python(abi) requires on
+	  paths
+	  * fix versioned python(abi) requires on paths to be '>=', not
+	  '=='
+
+2010-10-30 03:38  anssi
+
+	* NEWS, configure.ac: release 1.111
+
+2010-10-30 03:13  anssi
+
+	* NEWS, build.macros.in: - remove runtime dependencies from
+	  %py_requires as they are now handled
+	  automatically
+
+2010-10-30 03:11  anssi
+
+	* NEWS, find-requires.in: Generate requires on "python(abi) = x.y"
+	  instead of "python >= x.y" for
+	  python modules to properly handle the strict dependency.
+
+2010-10-20 01:20  peroyvind
+
+	* pythoneggs.py: determine python(abi) version based on path
+
+2010-10-20 00:45  peroyvind
+
+	* pythoneggs.py: improve...
+
+2010-10-19 02:59  peroyvind
+
+	* pythoneggs.py: add pythoneggs() dependency extractor
+
+2010-10-18 12:46  peroyvind
+
+	* configure.ac: bump version
+
+2010-10-18 12:46  peroyvind
+
+	* NEWS, rubygems.rb: fix warning
+
+2010-10-18 12:43  peroyvind
+
+	* NEWS, build.macros.in: drop %gem_unpack, equivalent behaviour has
+	  been implemented in %setup now.
+
+2010-10-16 22:00  peroyvind
+
+	* NEWS, build.macros.in, configure.ac: don't install dependencies
+	  for gems when using %gem_install
+
+2010-10-16 11:12  peroyvind
+
+	* NEWS, rpmeval.c: fix build with rpm 5.3 api
+
+2010-10-16 11:02  peroyvind
+
+	* rpmeval.c: include <stdint.h> (required by rpm 5.3)
+
+2010-10-16 10:15  peroyvind
+
+	* Makefile.am, NEWS, build.macros.in, configure.ac, gem_helper.rb:
+	  add gem_helper.rb and it's corresponding macros %gem_unpack,
+	  %gem_build &
+	  gem_install for simplifying & streamlining ruby gem packaging.
+
+2010-09-09 03:18  peroyvind
+
+	* NEWS, configure.ac, find-requires.in: enable automatic dependency
+	  extraction for ruby gems
+
+2010-07-16 10:30  jquelin
+
+	* NEWS, configure.ac, perl.prov: extract perl module version when
+	  $Full::Package::VERSION is set
+
+2010-07-14 10:11  jquelin
+
+	* NEWS, configure.ac, perl.req-from-meta: v1.105 - support to
+	  extract perl runtime requires from meta spec 2
+
+2010-04-27 09:52  cfergeau
+
+	* NEWS, configure.ac, find-debuginfo.sh: 1.104 - revert "strip -g"
+	  change for shared libraries
+
+2010-04-16 14:55  peroyvind
+
+	* NEWS, configure.ac, find-debuginfo.sh: strip shared libraries
+	  with the '-g' option
+
+2010-04-16 13:30  blino
+
+	* build.macros.in: handle build dir with spaces when finding debug
+	  info
+
+2010-04-07 22:16  misc
+
+	* NEWS, configure.ac: Version 1.102
+
+2010-04-07 22:08  misc
+
+	* find-requires.in: - do not requires python 2.X branch for python
+	  3.X rpm, requires instead python 3.X
+
+2010-03-26 16:33  jquelin
+
+	* NEWS, configure.ac: version 1.101
+
+2010-03-26 16:24  jquelin
+
+	* find-requires.in: call perl.req-from-meta with the reight meta
+	  file when there are other
+	  meta.json/meta.yml files shipped in the dist.
+
+2010-03-23 19:54  peroyvind
+
+	* find-provides.in: enable rubygems(...) provides
+
+2010-03-23 19:40  peroyvind
+
+	* find-debuginfo.sh: really check that the debug directory we want
+	  to search through exists, not only the parent
+
+2010-03-21 03:41  peroyvind
+
+	* Makefile.am, find-provides.in, find-requires.in, rubygems.rb: add
+	  rubygem(...) dependency extractor (disabled for now)
+
+2010-03-14 17:35  jquelin
+
+	* NEWS, configure.ac: cutting v1.100
+
+2010-03-12 17:22  jquelin
+
+	* perl.prov: skip plain, regular comments. how comes this has not
+	  been spotted earlier? (sigh)
+
+2010-03-12 17:19  jquelin
+
+	* find-requires.in: meta file is listed as an absolute path, not
+	  relative to BUILD root
+
+2010-03-09 00:14  peroyvind
+
+	* NEWS, configure.ac, find-debuginfo.sh: allow for for only
+	  stripping files without creating debug package contents by
+	  setting DISABLE_DEBUG environment variable.
+
+2010-03-05 13:33  peroyvind
+
+	* NEWS, configure.ac: do new release
+
+2010-03-05 12:44  peroyvind
+
+	* find-debuginfo.sh: reapply our changes against latest version
+	  from upstream
+
+2010-02-10 16:45  jquelin
+
+	* find-requires.in, perl.req-from-meta: reverting commit r266103
+
+2010-02-10 16:34  jquelin
+
+	* find-requires.in, perl.req-from-meta: using generated MYMETA.yml
+	  would be better. indeed, this creates what's
+	  been detected.
+
+2010-02-10 11:00  jquelin
+
+	* perl.req-from-meta: adding documentation
+
+2010-02-10 10:53  jquelin
+
+	* find-requires.in: using META.(yml|json) to extract requires if
+	  present
+
+2010-02-10 10:52  jquelin
+
+	* Makefile.am, perl.req-from-meta: new script: perl.req-from-meta
+
+2010-02-05 01:53  misc
+
+	* find-requires.in: - nuke requires on python-base, packages no
+	  longer exist for python 2.6
+
+2009-12-12 13:44  anssi
+
+	* NEWS, configure.ac: 1.97
+
+2009-12-12 13:39  anssi
+
+	* NEWS, find-debuginfo.sh: fix package build when the debug package
+	  is empty (regression introduded in 1.96)
+
+2009-12-10 20:22  anssi
+
+	* NEWS, configure.ac: release 1.96
+
+2009-12-10 12:40  anssi
+
+	* build.macros.in: Revert controversial %arm and %mips* changes as
+	  per advisement from
+	  Christophe Fergeau, and because we need the perl.prov change
+	  released. (reverts 263740, 263741)
+	  
+	  The macros can be readded later after an agreement has been
+	  reached.
+
+2009-12-08 09:52  jquelin
+
+	* perl.prov: 1990s called, they want their $VERSION back
+	  
+	  seriously, the code was only catching version such as:
+	  $VERSION = ...
+	  $VERSION = ...
+	  
+	  however, now version are often declared with our or my, with
+	  potentially
+	  some code before (eg, to load modules on the same line)
+	  
+	  this will allow perl.prov to assign a version to (almost) all
+	  perl(Foo::Bar) provides.
+
+2009-11-27 22:15  peroyvind
+
+	* build.macros.in: add %arm
+
+2009-11-27 22:14  peroyvind
+
+	* build.macros.in: add %mips, %mipsel & %mipsx
+
+2009-11-27 22:10  peroyvind
+
+	* build.macros.in: replace %sunsparc with %sparc & sparcx (from
+	  rpm5.org)
+
+2009-11-26 21:52  peroyvind
+
+	* find-requires.in: support ELF executables only as a.out has been
+	  deprecated since ages ago (fixes
+	  objdump 'File format not recognized' errors)
+
+2009-11-26 15:39  peroyvind
+
+	* find-debuginfo.sh: don't try finding debug files in buildroot
+	  when there's none
+
+2009-09-25 10:38  blino
+
+	* find-provides.in, find-requires.in: disable MIPS n32 ABI support
+	  (not used for now)
+
+2009-09-25 10:37  blino
+
+	* find-provides.in, find-requires.in: add support for MIPS n32
+	  binaries in find-requires and find-provides
+	  (from Arnaud Patard)
+
+2009-09-25 10:24  blino
+
+	* NEWS, configure.ac: 1.95
+
+2009-09-25 10:16  blino
+
+	* configure.ac: add arm support and use -gnueabi instead of -gnu
+	  (from Arnaud Patard)
+
+2009-09-25 10:10  blino
+
+	* Makefile.am, configure.ac, macros.in: introduce CANONTARGETGNU,
+	  to be able to use -gnueabi for ARM (from Arnaud Patard)
+
+2009-09-25 10:07  blino
+
+	* configure.ac: add mipsel support (from Arnaud Patard)
+
+2009-08-08 10:36  anssi
+
+	* NEWS, configure.ac: 1.94
+
+2009-08-08 10:34  anssi
+
+	* NEWS, build.macros.in: Update perl_convert_version to keep
+	  alphabetic tail in version number
+	  (Luca Berra).
+
+2009-07-28 14:04  cfergeau
+
+	* NEWS, configure.ac: 1.93
+
+2009-07-28 14:04  cfergeau
+
+	* build.macros.in: update perl_convert_version macro
+	  
+	  Patch from Jérôme Quelin
+	  
+	  current %perl_convert_version is defined as:
+	  %perl_convert_version() %(perl -Mversion -le
+	  %'$v=version->new(%{1})->normal; $v=~s/^v//; print $v')
+	  
+	  however, this does not work when parsing strange versions such as
+	  1.03a
+	  or 6.0.e (yes, those exist). currently we get:
+	  
+	  $ rpm --eval '%perl_convert_version 1.03a'
+	  Bareword found where operator expected at -e line 1, near "1.03a"
+	  (Missing operator before a?)
+	  syntax error at -e line 1, near "1.03a"
+	  Execution of -e aborted due to compilation errors.
+	  
+	  $ rpm --eval '%perl_convert_version 6.0.e'
+	  0.0.0
+	  
+	  therefore, i would like to update it a bit to read:
+	  %perl_convert_version() %(perl -Mversion -le
+	  %'$v=version->new("%{1}")->normal; $v=~s/^v//; print $v')
+	  
+	  (note the quotes enclosing the %{1})
+	  
+	  using this macro on above examples, we would get 1.30.0 and
+	  6.0.0. not
+	  perfect, but at least it doesn't fail, and %mkrel can be used to
+	  differentiate them.
+
+2009-07-28 14:04  cfergeau
+
+	* configure.ac: 1.92
+
+2009-07-28 14:04  cfergeau
+
+	* NEWS: update NEWS
+
+2009-07-09 15:30  cfergeau
+
+	* Makefile.am: Use git2cl to generate ChangeLog if we detect a git
+	  repository
+
+2009-07-07 17:06  jquelin
+
+	* perl.prov, perl.req: making sure automatic provides & requires
+	  for perl package are using the
+	  new macro %perl_convert_version
+	  cf http://lists.mandriva.com/maintainers/2009-06/msg00050.php
+
+2009-06-25 13:32  peroyvind
+
+	* find-debuginfo.sh: fix path to debugedit for rpm5
+
+2009-05-12 20:00  peroyvind
+
+	* Makefile.am: install platform specific directories under a
+	  dedicated 'platform' directory
+
+2009-02-03 13:43  cfergeau
+
+	* NEWS, configure.ac: 1.91
+
+2009-02-03 09:15  cfergeau
+
+	* build.macros.in: Add new perl_convert_version macro to convert
+	  cpan version to rpm version
+
+2009-02-03 09:15  cfergeau
+
+	* git-repository--after-tarball, git-repository--apply-patch: Use
+	  fake email address in commit logs
+	  
+	  If the commits don't have an email address looking like a valid
+	  email
+	  address, then git-rebase (and possibly other git tools) will
+	  complain.
+	  Use the dummy devel@mandriva.com as the email address of the
+	  author of
+	  the patch
+
+2009-01-29 20:17  pixel
+
+	* NEWS, git-repository--after-tarball: -
+	  git-repository--after-tarball:
+	  o commit the tarball with user "unknown"
+	  o commit the tarball using the tarball's modification time
+
+2009-01-29 16:37  pixel
+
+	* NEWS, configure.ac: 1.90
+
+2009-01-29 16:37  pixel
+
+	* build.macros.in: - call patch with -U (aka
+	  --unified-reject-files)
+
+2009-01-29 16:37  pixel
+
+	* NEWS, configure.ac: 1.89
+
+2009-01-29 14:12  pixel
+
+	* Makefile.am, NEWS, build.macros.in,
+	  git-repository--after-tarball, git-repository--apply-patch: -
+	  when %_with_git_repository is set, define %_after_setup and
+	  %_patch to use
+	  the new scripts git-repository--after-tarball and
+	  git-repository--apply-patch
+
+2009-01-07 16:22  cfergeau
+
+	* NEWS, configure.ac: Version 1.88 - 7 January 2009, by Christophe
+	  Fergeau
+	  
+	  - fix ugly warning during invocation of php.req
+	  - RPM5 fixes
+
+2008-12-15 16:49  pixel
+
+	* build.macros.in: add a warning about %defaultbuildroot
+
+2008-11-24 02:49  peroyvind
+
+	* find-requires.in: fix broken site_perl regexp which would add
+	  versioned requires without epoch
+	  and merge it with vendor_perl regexp
+
+2008-11-24 02:32  peroyvind
+
+	* find-requires.in: fix so that redundant unversioned
+	  python-base/perl-base is added as dependencies
+	  if a versioned is already added (maybe worth doing similar way
+	  with other
+	  depencies as well? for consistency at least, if for nothing else)
+
+2008-11-23 23:48  peroyvind
+
+	* find-requires.in: consistently use " at same place with sed while
+	  we're at it..
+
+2008-11-23 23:28  peroyvind
+
+	* Makefile.am, configure.ac, find-requires.in: I originally figured
+	  that querying rpm database within script weren't supposed
+	  to be done, but as I now see it's done elsewhere, perl-base epoch
+	  tag should
+	  rather be handled in the script than by autotools
+
+2008-11-23 21:43  peroyvind
+
+	* configure.ac: silence warnings about use of GNU make extensions
+
+2008-11-23 21:02  peroyvind
+
+	* Makefile.am, configure.ac, find-requires.in: don't hardcore epoch
+	  tag in versioned perl-base dependency
+
+2008-10-17 10:18  peroyvind
+
+	* install-sh: remove install-sh as this is pulled by autotools
+
+2008-10-17 10:15  peroyvind
+
+	* rpmeval.c: use rpmRC enum type rather than int
+
+2008-10-17 10:14  peroyvind
+
+	* rpmeval.c: fix frenchy plural grammar
+
+2008-10-17 10:13  peroyvind
+
+	* configure.ac: * pick up c, cpp & ld flags from pkg-config (needed
+	  by rpm5)
+	  * check for rpmio.h & rpmtag.h (needed by rpm5)
+
+2008-10-17 09:59  peroyvind
+
+	* configure.ac: fix typo of header name
+
+2008-10-17 09:41  peroyvind
+
+	* rpmeval.c: check for existence of rpmlib.h before including it,
+	  otherwise
+	  include rpmio.h & rpmtag.h (fixes rpm5 build)
+
+2008-10-05 15:25  guillomovitch
+
+	* find-requires.in: only call php.req if they are php files
+
+2008-09-22 07:41  pixel
+
+	* configure.ac: 1.87: really don't add php dependencies for doc
+	  files
+
+2008-09-20 15:14  guillomovitch
+
+	* find-requires.in, php.req: don't do php files filtering from
+	  inside php.req, but from find-requires, as per other
+	  language-specific dependencies
+
+2008-09-19 07:37  pixel
+
+	* configure.ac: 1.86: php.req: don't add php dependencies for doc
+	  files
+
+2008-09-18 19:43  guillomovitch
+
+	* php.req: don't add php dependencies for doc files
+
+2008-07-21 10:03  blino
+
+	* build.macros.in, configure.ac: add make_dm_session macro that
+	  calls fndSession
+
+2008-07-10 11:22  pixel
+
+	* build.macros.in, configure.ac: 1.84: [bugfix] fix
+	  %update_icon_cache/%clean_icon_cache
+
+2008-07-10 09:49  pixel
+
+	* build.macros.in, configure.ac: 1.83: intelligent
+	  %update_icon_cache/%clean_icon_cache which are null for
+	  caches handled through filetriggers, but as used to be for other
+	  caches
+
+2008-06-23 13:01  pixel
+
+	* configure.ac, find-lang.pl: 1.82: find-lang.pl: do not own
+	  /usr/share/locales/$lang/LC_MESSAGES to speed-up rpm
+	  
+	  Things owned a lot of times is a pathological case in rpm.
+	  For example, if you remove file list from poedit, it will
+	  install/uninstall
+	  much faster (3x faster for both cold start and warm start on a
+	  test on my box)
+
+2008-06-20 09:05  pixel
+
+	* build.macros.in, configure.ac: 1.81: fixes deprecated macros that
+	  were broken in previous release
+	  (%update_icon_cache, %clean_icon_cache,
+	  %post_install_gconf_schemas)
+
+2008-06-13 06:59  pixel
+
+	* build.macros.in, configure.ac: 1.80: macros deprecated by rpm
+	  filetriggers now return nothing
+
+2008-06-10 16:41  pixel
+
+	* configure.ac: 1.79: use lzma by default to compress binary
+	  packages (instead of gzip)
+
+2008-06-10 16:39  pixel
+
+	* macros.in: use lzma by default to compress binary packages
+	  (instead of gzip)
+
+2008-06-02 12:41  pixel
+
+	* configure.ac: 1.78 (remove test for %_localstatedir)
+
+2008-06-02 12:41  pixel
+
+	* tests/macros.sh: %_localstatedir is no more defined here, drop
+	  the test
+
+2008-06-02 12:06  pixel
+
+	* configure.ac: 1.77: activate filetriggers (cf
+	  http://wiki.mandriva.com/en/Rpm_filetriggers)
+
+2008-06-02 11:54  pixel
+
+	* macros.in: activate filetriggers (cf
+	  http://wiki.mandriva.com/en/Rpm_filetriggers)
+
+2008-04-01 21:43  blino
+
+	* configure.ac, kmod.prov: prefer DEST_MODULE_NAME over
+	  BUILT_MODULE_NAME if present
+
+2008-04-01 21:39  blino
+
+	* kmod.prov: provide "kmod(module) = PACKAGE_VERSION" for dkms
+	  binary modules as well (#35074)
+
+2008-03-28 09:05  pixel
+
+	* configure.ac: - 1.75:
+	  - remove some more macros which are now in rpm-manbo-setup
+	  - make sure debug files are world-readable
+
+2008-03-03 15:23  blino
+
+	* find-debuginfo.sh: make sure debug files are world-readable
+
+2008-02-15 17:08  pixel
+
+	* build.macros.in: remove some more macros which are now in
+	  rpm-manbo-setup
+
+2008-02-15 11:02  pixel
+
+	* build.macros.in, configure.ac, macros.in: 1.74: remove macros
+	  needed for Manbo packages (they are now in rpm-manbo-setup)
+
+2008-02-14 15:30  pixel
+
+	* Makefile.am, configure.ac, rpmb_deprecated, rpmpopt: 1.73:
+	  rpmpopt, rpmb_deprecated and rpmrc are now in rpm-manbo-setup
+
+2008-01-29 16:56  pixel
+
+	* platform.in: unused (rpmgenplatform is used)
+
+2008-01-29 16:45  pixel
+
+	* configure.ac: - 1.72
+	  - add option --with-only-rpmrc. when used, per-arch macros are
+	  not installed
+	  (since %optflags is already in rpmrc and other macros are now in
+	  standard
+	  rpm per-arch macros)
+	  - /etc/rpm/macros.d/build.macros
+	  o move here most macros from /usr/lib/rpm/<vendor>/macros,
+	  those macros will not be available anymore when
+	  rpm-<vendor>-setup-build
+	  is not installed
+	  o restore %check macro. it allows "--without check".
+	  o explain the advantage of "--without <section>" (inherited from
+	  conectiva)
+	  o remove duplicated macros
+	  o remove %_multilibno (already defined in both
+	  /usr/lib/rpm/<arch>/macros
+	  and/or /usr/lib/rpm/<vendor>/<arch>/macros)
+	  - /usr/lib/rpm/<vendor>/macros:
+	  o add %_gnu and %_target_platform (was in <arch>/macros)
+	  - /usr/lib/rpm/<vendor>/rpmopt:
+	  o drop --scripts alias (nicely handled by rpm's rpmpopt for some
+	  time)
+
+2008-01-29 16:37  pixel
+
+	* Makefile.am, build.macros.in, macros.in: move many macros out of
+	  /usr/lib/rpm/<vendor>/macros into
+	  new file /etc/rpm/macros.d/build.macros, those macros will not be
+	  available
+	  anymore if rpm-<vendor>-setup-build is not installed
+
+2008-01-29 15:58  pixel
+
+	* Makefile.am, make_arch_macrosfiles.sh.in, make_macrosfiles.sh.in:
+	  rename macrosfiles to arch_macrosfiles to make it more clear
+
+2008-01-29 14:57  pixel
+
+	* macros.in: %_multilibno is defined in both
+	  /usr/lib/rpm/<arch>/macros and
+	  /usr/lib/rpm/mandriva/<arch>/macros
+	  we must not override /usr/lib/rpm/<arch>/macros for the case
+	  where we don't
+	  provide /usr/lib/rpm/mandriva/<arch>/macros anymore
+
+2008-01-29 14:45  pixel
+
+	* Makefile.am, configure.ac: add option --with-only-rpmrc. when
+	  used, per-arch macros are not installed
+	  (%optflags is already in rpmrc and other macros and in standard
+	  rpm per-arch
+	  macros)
+
+2008-01-29 12:02  pixel
+
+	* macros.in: s/mandrakesoft/mandriva/
+
+2008-01-29 12:02  pixel
+
+	* macros: remove wrongly added file (emacs was too strong for me)
+
+2008-01-29 09:48  pixel
+
+	* macros: replace @mandrakesoft.com with @mandriva.com
+
+2008-01-28 17:51  pixel
+
+	* macros.in: remove duplicated entry
+
+2008-01-28 17:41  pixel
+
+	* macros-perarch.in, macros.in: move %_gnu out of perarch macros
+	  (it could be dropped altogether, keeping for backward
+	  compatibility only)
+
+2008-01-28 17:39  pixel
+
+	* macros-perarch.in: remove %_target_platform from perlarch macros,
+	  since it is not arch specific
+
+2008-01-28 17:30  pixel
+
+	* macros.in: drop some unused comments
+
+2008-01-28 16:02  pixel
+
+	* macros.in: - remove some commented macros
+	  - restore %check macro but a different implementation more alike
+	  the others.
+	  this %checks allows "--without check"
+	  - explain the advantage of "--without <section>" (inherited from
+	  conectiva)
+
+2008-01-28 14:48  pixel
+
+	* macros.in: remove duplicated %%install (keeping the one which
+	  handles %{_with install}
+	  and which is currently the one that is used)
+
+2008-01-25 13:09  pixel
+
+	* rpmpopt: alias --scripts is better handled in rpm's rpmpopt
+	  (and is nicely handled by rpm's rpmpopt for some time)
+
+2008-01-23 23:30  pixel
+
+	* Makefile.am, configure.ac: 1.71: do package rpmb_deprecated
+
+2008-01-23 13:57  pixel
+
+	* Makefile.am, configure.ac, rpmb_deprecated, rpmpopt: 1.70:
+	  deprecate "rpm -b" in favor of "rpmbuild -b"
+
+2008-01-22 15:57  pixel
+
+	* configure.ac: 1.69
+
+2008-01-22 15:00  anssi
+
+	* macros.in: Make %serverbuild define CFLAGS, CXXFLAGS and
+	  RPM_OPT_FLAGS variables
+	  as well since some specs are depending on it. Fixes bug #32050.
+
+2008-01-07 17:34  pixel
+
+	* configure.ac, macros.in, rpmrc.in: 1.68: do not use ssp_flags on
+	  archs which do not handle it (thanks to rtp)
+
+2007-12-21 16:08  pixel
+
+	* configure.ac: 1.67
+
+2007-12-21 16:08  pixel
+
+	* find-requires.in: automatically require perlapi-<perl-version>
+	  for binary perl modules
+	  (so that we can cleanly handle perl API breakage)
+
+2007-12-20 09:59  pixel
+
+	* configure.ac: 1.66
+
+2007-12-20 09:58  pixel
+
+	* rpm-spec-mode.el: update known rpm groups (#27773)
+
+2007-12-20 09:48  pixel
+
+	* macros.in: make %serverbuild modify %optflags instead of shell
+	  variables (Anssi) (#32050)
+
+2007-12-19 18:12  pixel
+
+	* Makefile.am, configure.ac: 1.65:
+	  - add option --with-rpmplatform to install or not
+	  /etc/rpm/platform and genplatform
+	  - rpm-spec-mode.el: use buildroot macro instead of RPM_BUILD_ROOT
+	  environment variable
+
+2007-12-19 10:39  blino
+
+	* rpm-spec-mode.el: use buildroot macro instead of RPM_BUILD_ROOT
+	  environment variable
+
+2007-12-17 17:23  pixel
+
+	* configure.ac: 1.64
+
+2007-12-17 16:50  pixel
+
+	* macros.in: define %defaultbuildroot instead of %buildroot (fixes
+	  #34705),
+	  this needs at least rpm 4.4.2.2-2mdv
+
+2007-12-17 16:42  pixel
+
+	* macros.in: add rpm 4.4.6 python macros for compatibility
+	  (even if it overlaps with py_* macros)
+
+2007-10-02 10:16  blino
+
+	* configure.ac: 1.63
+
+2007-10-02 10:16  blino
+
+	* find-provides.in: fix check for kmod.prov
+
+2007-09-27 09:47  blino
+
+	* configure.ac: 1.62
+
+2007-09-27 09:47  blino
+
+	* kmod.prov: print kmod provides even if no version is found
+
+2007-09-27 09:45  blino
+
+	* kmod.prov: fix undefing ver
+
+2007-09-27 09:45  blino
+
+	* kmod.prov: fix match of modules with '-'
+
+2007-09-27 09:29  blino
+
+	* kmod.prov: use vermagic instead of srcversion (from Danny)
+
+2007-09-25 11:57  blino
+
+	* configure.ac: 1.61
+
+2007-09-25 11:55  blino
+
+	* kmod.prov: substitute $PACKAGE_NAME in kmod() provides
+
+2007-09-25 11:55  blino
+
+	* kmod.prov: fix handling multiple dkms.conf files (it probably
+	  won't happen in real life)
+
+2007-09-25 11:54  blino
+
+	* kmod.prov: move PACKAGE_NAME in a variable for next commits
+
+2007-09-20 19:47  pixel
+
+	* configure.ac: - 1.60:
+	  - handle symlinks the same way as files in find-lang.pl, some
+	  symlinks in
+	  documentation were previously left out (Anssi)
+
+2007-09-20 19:42  anssi
+
+	* find-lang.pl: Handle symlinks the same way as files in
+	  find-lang.pl, some symlinks in
+	  documentation were previously left out.
+
+2007-09-14 16:04  pixel
+
+	* configure.ac: - 1.59:
+	  - find-requires:
+	  o fix GCJ AOT directory regexp in find-requires.in (anssi)
+	  o remove "Using BuildRoot: ..." message, it's mostly a duplicate
+	  of rpm's
+	  "Finding Requires ...", and it's too verbose when using "rpm -bb
+	  --quiet"
+
+2007-09-14 15:54  anssi
+
+	* find-requires.in: Fix GCJ AOT directory regexp in
+	  find-requires.in.
+
+2007-09-10 16:41  pixel
+
+	* find-requires.in: remove "Using BuildRoot: ..." message, it's
+	  mostly a duplicate of rpm's
+	  "Finding Requires ...", and it's too verbose when using "rpm -bb
+	  --quiet"
+
+2007-09-10 12:09  pixel
+
+	* configure.ac: - 1.58:
+	  - find-requires.in:
+	  o do not use buildroot since it may contain double slashes
+	  whereas filelist
+	  do not (fixes missing require on perl-base and python-base)
+	  - filter.sh, macros.in:
+	  o handle double slashes in buildroot in filter.sh in new file
+	  exception
+	  macros, in case tmppath contains a trailing slash as in iurt.
+	  This also
+	  fixes handling of exception macros that contain spaces, which has
+	  been
+	  broken for a while.
+	  - find-provides.in, find-requires.in: (Anssi)
+	  o ignore library dependencies of objects in /usr/lib(64)/gcj/,
+	  which are GCJ
+	  AOT compiled shared objects and are only useful when running the
+	  software
+	  in the package with gij (gcc java). If the user uses some other
+	  java VM,
+	  they do not need their dependencies satisfied.
+
+2007-09-10 12:06  pixel
+
+	* find-requires.in: do not use buildroot since it may contain
+	  double slashes whereas filelist do not
+
+2007-09-10 11:29  anssi
+
+	* find-provides.in, find-requires.in: Ignore library dependencies
+	  of objects in /usr/lib(64)/gcj/, which are GCJ
+	  AOT compiled shared objects and are only useful when running the
+	  software in
+	  the package with gij (gcc java). If the user uses some other java
+	  VM, they do
+	  not need their dependencies satisfied.
+
+2007-09-08 15:34  anssi
+
+	* filter.sh, macros.in: Handle double slashes in buildroot in
+	  filter.sh in new file exception macros,
+	  in case tmppath contains a trailing slash as in iurt. This also
+	  fixes handling
+	  of exception macros that contain spaces, which has been broken
+	  for a while.
+
+2007-09-06 14:26  pixel
+
+	* configure.ac: - 1.57:
+	  - create /etc/rpm/platform32 (used instead of /etc/rpm/platform
+	  when run through linux32)
+
+2007-09-06 14:24  pixel
+
+	* Makefile.am, macros.in: revert %_host_cpu32 and create
+	  /etc/rpm/platform32 instead
+	  (cf patch rpm-4.4.8-use-etc-platform32-when-linux32.patch in rpm)
+
+2007-09-06 09:37  pixel
+
+	* configure.ac: - 1.56:
+	  - find-lang.pl: include file by file except with --all-name
+	  (nanardon)
+	  - set %_host_cpu32 (used instead of %_host_cpu when run through
+	  linux32)
+
+2007-09-06 08:59  pixel
+
+	* Makefile.am, configure.ac, macros.in: set %_host_cpu32 (used
+	  instead of %_host_cpu when run through linux32)
+	  (cf patch rpm-4.4.8-use_host_cpu32-when-linux32.patch in rpm)
+
+2007-09-05 15:37  nanardon
+
+	* find-lang.pl, tests/findlang.pl: - include file be file except
+	  with --all-name
+
+2007-09-04 17:44  blino
+
+	* configure.ac: 1.55
+
+2007-09-04 17:43  blino
+
+	* kmod.prov: add package version in dkms.conf kmod() provides
+
+2007-09-04 17:43  blino
+
+	* kmod.prov: rewrite the dkms kmod() output loop
+
+2007-09-04 17:42  blino
+
+	* kmod.prov: do not process empty dkms list
+
+2007-09-04 08:51  blino
+
+	* configure.ac: 1.54
+
+2007-09-04 08:37  blino
+
+	* kmod.prov: find kmod() provides in dkms.conf files (default on
+	  PACKAGE_NAME if no BUILT_MODULE_NAME is specified)
+
+2007-08-28 15:20  pixel
+
+	* configure.ac: 1.53
+
+2007-08-28 15:19  pixel
+
+	* rpm-mandriva-setup.spec: remove obsolete rpm-mandriva-setup.spec
+
+2007-08-28 15:17  pixel
+
+	* macros.in: ensure %debug_package doesn't modify %{summary} in
+	  %install section
+	  (ie restore it via a fake __restore__ subpackage)
+	  (I suggested it on cooker and got no answer...)
+
+2007-08-26 13:44  nanardon
+
+	* configure.ac: - 1.52
+
+2007-08-26 12:52  nanardon
+
+	* Makefile.am, find-lang-root, tests/findlang.pl,
+	  tests/findlang.sh: - test are altered by .svn files, fixing
+
+2007-08-25 23:05  nanardon
+
+	* TODO: - add TODO list
+
+2007-08-25 18:23  blino
+
+	* Makefile.am, find-provides.in, kmod.prov: add automatic kmod
+	  provides (based on work from Danny Tholen)
+
+2007-08-25 18:20  blino
+
+	* autogen.sh: run libtoolize to copy ltmain.sh
+
+2007-08-24 16:51  nanardon
+
+	* Makefile.am, find-lang-root/usr/share/gnome,
+	  find-lang-root/usr/share/gnome/help,
+	  find-lang-root/usr/share/gnome/help/lang,
+	  find-lang-root/usr/share/gnome/help/lang/pt_BR,
+	  find-lang-root/usr/share/gnome/help/lang/pt_BR/any.html,
+	  find-lang-root/usr/share/locale,
+	  find-lang-root/usr/share/locale/pt_BR,
+	  find-lang-root/usr/share/locale/pt_BR/LC_MESSAGES,
+	  find-lang-root/usr/share/locale/pt_BR/LC_MESSAGES/lang.mo,
+	  find-lang.pl, tests/findlang.pl: - only own parent dir and let
+	  rpm find content
+
+2007-08-23 13:36  nanardon
+
+	* Makefile.am: - filled Makefile.am
+
+2007-08-23 13:31  nanardon
+
+	* find-lang-root, find-lang-root/usr, find-lang-root/usr/share,
+	  find-lang-root/usr/share/man, find-lang-root/usr/share/man/fr,
+	  find-lang-root/usr/share/man/fr/man1,
+	  find-lang-root/usr/share/man/fr/man1/lang.1.lzma, find-lang.pl,
+	  tests/findlang.pl, tests/findlang.sh: - add basic test runtime
+	  for find-lang
+
+2007-08-23 13:03  nanardon
+
+	* find-lang.pl: - tag directory, fix directory tag set
+
+2007-08-23 12:51  nanardon
+
+	* find-lang.pl: - tag %dir with %lang again
+
+2007-08-23 12:45  nanardon
+
+	* configure.ac: - 1.51
+
+2007-08-23 12:35  nanardon
+
+	* find-lang.pl: - dont tag C lang
+	  - tag full lang, not only before '_'
+
+2007-08-22 12:32  nanardon
+
+	* find-lang.pl: - tagging all files one by one, as rpm seems to not
+	  include content of dir having %lang
+	  - ensure parent dir for gnome are listed
+	  - improve multiple lang on dir filtering (aka no %lang)
+
+2007-08-21 15:02  nanardon
+
+	* configure.ac: - 1.50
+
+2007-08-21 14:57  nanardon
+
+	* find-lang.pl: - fix second part of #32366
+
+2007-08-21 13:21  nanardon
+
+	* configure.ac: - 1.49
+
+2007-08-21 13:07  nanardon
+
+	* find-lang.pl: - when a file/dir is owned by multiple language, we
+	  assume it should be always installed
+
+2007-08-02 12:03  pixel
+
+	* .: ignore generated files
+
+2007-08-02 11:06  pixel
+
+	* configure.ac: 1.48
+
+2007-08-02 11:06  pixel
+
+	* macros.in: tell rpmlib to open all indices before doing chroot.
+	  fixes "db4 error"s like #31922, and may fix #31873
+
+2007-07-27 16:35  nanardon
+
+	* macros.in: - add default buildroot definition
+
+2007-07-25 17:12  nanardon
+
+	* filter.sh, macros.in: - fix #31973 (Impossible to exclude single
+	  files from autoreq/autoprov)
+
+2007-07-13 22:40  nanardon
+
+	* configure.ac: - 1.47
+
+2007-07-13 22:38  nanardon
+
+	* macros.in: - _extension will be now lzma
+
+2007-07-12 11:42  nanardon
+
+	* macros.in: - add sparcv9b & sparcv9v to %{sunsparc} variable
+	  (#31286)
+
+2007-07-11 12:26  pixel
+
+	* macros.in: make "rpm -qa" fast (#23121)
+	  
+	  (re-sync after the big svn loss)
+
+2007-07-11 12:22  pixel
+
+	* perl.req: There might be a comment on a "use base" line when
+	  computing perl requires
+	  (bug #24193).
+	  
+	  (re-sync after the big svn loss)
+
+2007-07-05 22:27  nanardon
+
+	* configure.ac, find-lang.pl: - 1.46
+
+2007-07-05 17:31  fcrozat
+
+	* macros.in: Fix my previous incorrect changes to gconf macros
+
+2007-06-26 12:55  nanardon
+
+	* configure.ac: - tag 1.45
+
+2007-06-26 12:33  nanardon
+
+	* rpmgenplatform.in: - allow to redirect into a file (-o option)
+
+2007-06-26 12:26  nanardon
+
+	* rpmgenplatform.in: - allow installation of non -gnu package
+
+2007-06-26 08:42  nanardon
+
+	* macros.in: remove useless ()
+
+2007-06-25 23:51  nanardon
+
+	* macros.in: - add arch_tagged macros to tag dependencies when
+	  32/64 bits does matter
+
+2007-06-25 23:20  nanardon
+
+	* macros.in: - simplify optflags definition
+
+2007-06-25 18:58  andreas
+
+	* macros.in: - use -fstack-protector by default with a reduced size
+	  parameter (4 bytes, taken
+	  from fedora)
+	  - only use -fstack-protector-all for serverbuild (should we
+	  really be doing this?)
+	  - dropped -fno-omit-frame-pointer from serverbuild macro
+	  according to
+	  discussion on cooker. Seems it was only there because of libsafe,
+	  which is no
+	  longer used
+
+2007-06-25 17:32  nanardon
+
+	* find-lang.pl: - man page are compress after install step, taking
+	  care to filename to handle all case
+
+2007-06-25 16:07  nanardon
+
+	* macros.in: - really use new find-lang.pl
+
+2007-06-25 15:58  nanardon
+
+	* find-lang.pl: - fix perl path in shebang
+
+2007-06-25 15:20  nanardon
+
+	* Makefile.am, find-lang.sh: - use find-lang.pl now
+
+2007-06-25 15:20  nanardon
+
+	* find-lang.pl: - perlchecker fix to please titi
+
+2007-06-25 15:08  nanardon
+
+	* find-lang.pl: - allow to pass multiple name to find
+
+2007-06-25 15:02  nanardon
+
+	* find-lang.pl: - manage man page too
+
+2007-06-25 14:28  tv
+
+	* .perl_checker: blacklist a few perl modules in order to
+	  perl_checker to parse find-lang.pl
+
+2007-06-25 14:21  nanardon
+
+	* find-lang.pl: - clean useless code
+
+2007-06-25 14:18  nanardon
+
+	* Makefile.am: - install rpmgenplatform
+
+2007-06-25 14:17  nanardon
+
+	* rpmgenplatform.in: - fix perl path in shebang
+
+2007-06-25 14:11  nanardon
+
+	* Makefile.am, genplatform.in, rpmgenplatform.in: - rename
+	  genplatform to rpmgenplatform
+
+2007-06-25 14:01  anssi
+
+	* rpmrc.in: add optflags for pentium3 and pentium4
+
+2007-06-25 13:53  nanardon
+
+	* genplatform.in: - make our platform more comprehensive for other
+	  vendor
+
+2007-06-19 14:21  andreas
+
+	* configure.ac: - 1.44
+
+2007-06-19 14:17  andreas
+
+	* configure.ac: - 1.43
+
+2007-06-19 13:14  andreas
+
+	* macros.in: - added -fstack-protector to %serverbuild macro
+
+2007-06-18 22:49  nanardon
+
+	* genplatform.in: - ensure noarch is added to our arch list
+
+2007-06-17 16:23  nanardon
+
+	* Makefile.am, configure.ac, genplatform.in: - push into platform
+	  all compat arch
+
+2007-06-15 16:47  nanardon
+
+	* macros.in: - add ocaml_sitelib macros
+
+2007-06-15 14:16  nanardon
+
+	* macros.in: - add _xfontdir macros
+
+2007-06-06 16:36  fcrozat
+
+	* macros.in: Use only one gconftool call for registering /
+	  unregistering multiple schemas, speed up things
+
+2007-06-05 16:40  nanardon
+
+	* configure.ac: - 1.42
+
+2007-06-05 16:28  nanardon
+
+	* Makefile.am, configure.ac, platform.in: - provide a
+	  /etc/rpm/platform
+
+2007-06-02 16:17  nanardon
+
+	* macros.in: - according discuss on cooker ml, doc goes into %name/
+	  instead %name-%version/ subdir
+
+2007-05-19 21:20  nanardon
+
+	* find-lang.pl: - rewrite find-lang
+
+2007-05-18 19:24  nanardon
+
+	* macros.in: - disable libtoolize by default in configure
+	  - split libtoolize command into its own macro
+	  (__libtoolize_configure)
+
+2007-05-08 21:25  herton
+
+	* configure.ac, macros.in: - removed duplicated macros from
+	  rpm-helper, the macros in rpm-helper
+	  are the ones used, so we don't need to also copy them here (see
+	  ticket
+	  #30568).
+	  - bump version to 1.41.
+
+2007-03-16 10:23  nanardon
+
+	* configure.ac: - 1.40
+
+2007-03-16 00:20  blino
+
+	* find-lang.sh: add --with-html option to tag langs in */doc/HTML/
+
+2007-03-10 19:35  nanardon
+
+	* Makefile.am: - include tests file in package
+
+2007-03-10 17:34  nanardon
+
+	* configure.ac: - 1.38
+
+2007-03-10 15:09  nanardon
+
+	* find-provides.in, find-requires.in: - use externals scripts for
+	  haskell deps
+
+2007-03-09 12:01  nanardon
+
+	* Makefile.am: - don't install rpmeval
+
+2007-03-09 12:00  nanardon
+
+	* Makefile.am: - fix ChangeLog generation
+
+2007-03-08 17:20  nanardon
+
+	* find-provides.in, find-requires.in: - handle haskell requirement
+
+2007-02-22 13:03  nanardon
+
+	* README: - notify make test
+
+2007-02-22 13:01  nanardon
+
+	* Makefile.am, configure.ac, rpmeval.c, tests, tests.sh,
+	  tests/macros.sh: - add regression tests
+
+2007-02-20 14:03  goetz
+
+	* autogen.sh: add simple autogen.sh script
+
+2007-02-19 14:15  goetz
+
+	* configure.ac, find-requires.in: filter out devel(ld-linux) if
+	  using objdump too
+
+2007-02-17 18:21  nanardon
+
+	* ChangeLog, configure.ac: ChangeLog
+
+2007-02-17 15:52  nanardon
+
+	* ChangeLog, pkgconfigdeps.sh: - really fix #28577
+
+2007-02-16 18:42  nanardon
+
+	* ChangeLog, configure.ac: - 1.35
+
+2007-02-16 18:41  nanardon
+
+	* find-requires.in: - enable pkgconfig requirement
+
+2007-02-13 23:52  nanardon
+
+	* pkgconfigdeps.sh: - remove misplaced and not working code
+
+2007-02-13 23:51  nanardon
+
+	* pkgconfigdeps.sh: - call pkgconfig one time all .pc file to allow
+	  to find all deps #28577
+
+2007-02-13 22:26  nanardon
+
+	* Makefile.am, find-provides.in, find-requires.in,
+	  pkgconfigdeps.sh: - fork pkgconfig dependencies finder script
+
+2007-02-13 22:20  nanardon
+
+	* find-provides.in, find-requires.in: - disable libtool provides
+
+2007-02-06 14:52  nanardon
+
+	* find-requires.in: - fix typo in test
+
+2007-02-06 14:49  nanardon
+
+	* find-requires.in: Use objdump instead of ldd for devel
+	  dependencies finder (#25877)
+
+2007-01-24 23:35  nanardon
+
+	* find-provides.in, find-requires.in: - replace grep A-Z by :upper:
+	  to fix matching when using utf8 locales (#23724)
+
+2007-01-15 12:58  gb
+
+	* ChangeLog: updates
+
+2007-01-15 12:54  gb
+
+	* configure.ac, find-requires.in: Auto-detect binary files that
+	  Requires: rtld(GNU_HASH)
+
+2006-12-01 14:45  gb
+
+	* configure.ac, make_macrosfiles.sh.in, rpmrc.in: Introduce ppc32
+	  optflags.
+
+2006-12-01 14:34  gb
+
+	* make_macrosfiles.sh.in: match optflags ARCH exactly (aka fix
+	  regexp to match word boundary)
+
+2006-12-01 13:05  gb
+
+	* make_macrosfiles.sh.in: fix MULTILIBNO for ppc64
+
+2006-11-30 12:39  gb
+
+	* find-requires.in: Merge: exclude linux-vdso64 from devel()
+	  autorequires.
+
+2006-11-10 11:20  gb
+
+	* rpm-mandriva-setup.spec: let's assume --without emacsspecmode
+	  implies have_emacsmodespec 0
+
+2006-11-10 11:15  gb
+
+	* rpm-mandriva-setup.spec: pfff, 3 of them
+
+2006-11-10 11:14  gb
+
+	* rpm-mandriva-setup.spec: fix typo
+
+2006-11-10 11:13  gb
+
+	* ChangeLog, configure.ac: 1.31
+
+2006-11-10 11:08  gb
+
+	* rpmrc.in: optimize for cell
+
+2006-11-10 10:58  gb
+
+	* rpmrc.in: Use -mtune=generic by default now
+
+2006-09-08 07:31  rafael
+
+	* perl.prov: Some packages, like DB, might be temporarily redefined
+	  into a perl module.
+	  Don't take them into account when computing perl provides.
+
+2006-09-06 15:27  nanardon
+
+	* macros.in: - revert again mkrel commit by mistake with another
+	  fix
+
+2006-09-05 23:59  nanardon
+
+	* Makefile.am: - kill rpm target
+
+2006-09-03 18:12  nanardon
+
+	* find-requires.in: - fix 25126: add anchor to the regexp
+
+2006-09-01 15:07  nanardon
+
+	* ChangeLog: - tag 1.30
+
+2006-09-01 15:00  nanardon
+
+	* ChangeLog, configure.ac: - 1.30
+
+2006-09-01 14:45  goetz
+
+	* macros.in: remove evil line break from the clean_icon_cache macro
+
+2006-08-31 16:04  nanardon
+
+	* configure.ac, macros.in: - revert last change, broken (thx warly)
+
+2006-08-30 22:47  nanardon
+
+	* ChangeLog: - tag 1.28
+
+2006-08-30 22:41  nanardon
+
+	* configure.ac: - 1.28
+
+2006-08-30 22:41  nanardon
+
+	* macros.in: - change mkrel behavior to have subrel before
+	  distsuffix
+
+2006-07-28 15:35  nanardon
+
+	* macros.in: - apply patch fixing #23980 (%clean_icon_cache will
+	  fail for icon theme packages) from G. Waschk
+
+2006-07-26 11:29  nanardon
+
+	* ChangeLog: - tag 0.26
+
+2006-07-26 11:28  nanardon
+
+	* ChangeLog, Makefile.am, configure.ac, rpm-mandriva-setup.spec: -
+	  0.26
+
+2006-07-26 08:29  nanardon
+
+	* find-requires.in: - add /usr/share/pkconfig as path where those
+	  can live
+
+2006-07-13 09:05  blino
+
+	* configure.ac: 1.25
+
+2006-07-13 09:00  blino
+
+	* rpm-mandriva-setup.spec: 1.25-1mdv2007.0
+
+2006-07-13 08:42  fcrozat
+
+	* macros.in: Force also icon cache generation on uninstall or
+	  removed files might be left in cache
+
+2006-06-30 10:18  blino
+
+	* rpm-mandriva-setup.spec: fix macro in changelog
+
+2006-06-30 10:14  blino
+
+	* configure.ac: 1.24
+
+2006-06-30 10:12  blino
+
+	* INSTALL: "automake -a" is required to add missing standard files
+	  to package
+
+2006-06-29 15:55  blino
+
+	* ChangeLog: update ChangeLog
+
+2006-06-29 15:53  blino
+
+	* Makefile.am: really log the whole module, not only the ChangeLog
+	  file
+
+2006-06-29 15:47  blino
+
+	* rpm-mandriva-setup.spec: 1.24-1mdv2007.0
+
+2006-06-29 15:47  blino
+
+	* rpm-spec-mode.el: use %mkrel by default in new spec files
+
+2006-06-17 20:35  nanardon
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - this version
+	  is 1.23
+
+2006-06-17 20:32  nanardon
+
+	* ChangeLog: - update Changelog
+
+2006-06-17 20:32  nanardon
+
+	* Makefile.am: - fix make ChangeLog
+
+2006-06-17 17:48  nanardon
+
+	* macros.in: - add _webconfdir* macros (G. Rousse)
+
+2006-06-16 16:22  fcrozat
+
+	* macros.in: Add missing scrollkeeper macros
+
+2006-06-16 13:58  fcrozat
+
+	* macros.in: Add new macros
+
+2006-06-12 08:47  nanardon
+
+	* Makefile.am: - use svn2cl instead cvs2cl
+
+2006-06-12 08:46  nanardon
+
+	* macros.in: - readd subrel (Buchan Milne)
+
+2006-06-06 16:35  nanardon
+
+	* rpm-mandriva-setup.spec: - release is 1, not 0.1
+
+2006-06-06 16:34  nanardon
+
+	* Makefile.am: - remove cvs2cl as we are now using svn
+
+2006-06-03 18:03  othauvin
+
+	* rpm-mandriva-setup.spec: - add changelog for 1.22
+
+2006-06-03 18:00  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.22
+
+2006-05-31 20:22  othauvin
+
+	* find-provides.in, find-requires.in: - enable pkgconfig & libtool
+	  provides
+
+2006-05-25 11:27  othauvin
+
+	* find-requires.in: - strip linux-vdso32 requirement (spturtle)
+
+2006-05-25 11:27  othauvin
+
+	* ChangeLog: - update
+
+2006-05-24 18:13  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.21
+
+2006-05-24 18:11  othauvin
+
+	* macros.in: - new mkrel behavior
+
+2006-05-21 02:34  othauvin
+
+	* rpmpopt: - impprove --scripts option to list also %posttrans
+	  (Luca Berra)
+
+2006-05-20 14:28  othauvin
+
+	* Makefile.am: wooops, generate ChangeLog
+
+2006-05-20 14:26  othauvin
+
+	* Makefile.am, configure.ac, macros.in, rpm-mandriva-setup.spec: -
+	  1.20
+
+2006-05-20 12:32  othauvin
+
+	* macros.in: - remove X11R6/ dir since xorg7 deprecated it
+
+2006-05-10 09:22  rgarciasuarez
+
+	* ChangeLog, rpm-mandriva-setup.spec: Update .spec file
+
+2006-05-10 09:20  rgarciasuarez
+
+	* ChangeLog, configure.ac: 1.19
+
+2006-05-10 09:19  rgarciasuarez
+
+	* find-provides.in, find-requires.in: Revert recent changes to
+	  computation of provides/requires w.r.t .so files that
+	  are not in standard paths.
+
+2006-04-03 13:18  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.18
+
+2006-04-03 13:09  rgarciasuarez
+
+	* find-requires.in: * Require only .so that are in standard paths
+	  * Use ldd instead of objdump to get the list of required .so.
+	  This enables to
+	  get the so paths.
+
+2006-03-29 08:13  rgarciasuarez
+
+	* ChangeLog: ChangeLog update
+
+2006-03-25 17:32  rgarciasuarez
+
+	* ChangeLog, rpm-mandriva-setup.spec: Update changelog with recent
+	  commit
+
+2006-03-25 02:35  othauvin
+
+	* macros.in: - fix rename macro, aka don't obsolete what is
+	  provided (reported by Ze)
+
+2006-03-24 21:39  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.17
+
+2006-03-24 21:34  rgarciasuarez
+
+	* INSTALL: Some basic build instructions
+
+2006-03-24 18:03  rgarciasuarez
+
+	* find-provides.in: Don't provide .so files that aren't in standard
+	  paths
+
+2006-03-16 14:19  rgarciasuarez
+
+	* perl.prov: Don't search perl files for provides if they don't end
+	  with .pm (because
+	  if they don't, the perl interpreter won't look them up in @INC)
+
+2006-03-16 13:36  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.16-1mdk
+
+2006-03-16 13:13  rgarciasuarez
+
+	* filter.sh, find-requires.in, macros.in: Update OS name
+
+2006-03-16 09:36  rgarciasuarez
+
+	* find-requires.in: Avoid the words "statically" and "linked" to
+	  appear in some -devel
+	  autogenerated dependencies (bug #8231, patch by Guillaume Rousse)
+
+2006-03-14 13:28  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.15-1mdk
+
+2006-03-14 11:42  rgarciasuarez
+
+	* macros.in: Set _repackage_all_erasures to 0 (this gets turned on
+	  by default with rpm 4.4.5)
+
+2006-03-05 01:58  othauvin
+
+	* macros.in: - add a way to disable fortify from cflags as it cause
+	  some issue in some software
+
+2006-02-09 14:38  rgarciasuarez
+
+	* macros.in: Forgot "sparc" in arch list
+
+2006-02-09 14:35  rgarciasuarez
+
+	* macros.in: Add a macro to list all sparc-compatible archs (Per
+	  Øyvind Karlsen)
+
+2006-01-23 10:40  prigaux
+
+	* rpm-spec-mode.el: handle increasing things like "%mkrel 2"
+
+2006-01-20 23:09  othauvin
+
+	* macros.in: - remove pre flags on python requirement (helio)
+
+2006-01-15 19:32  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.14
+
+2006-01-15 19:27  othauvin
+
+	* macros.in: - add macros from Giuseppe for gcjdb
+
+2006-01-13 23:02  othauvin
+
+	* rpmrc.in: - kill /etc/rpm/macros.* in macro search path
+
+2006-01-11 18:17  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.13
+
+2006-01-11 13:47  mscherer
+
+	* macros.in: - add %py_platlibdir, %py_purelibdir and sister in
+	  order to be able to use a different directory for
+	  pure python package and compiled python module.
+	  use named arg function call for more readabilty and
+	  maintenability.
+
+2006-01-10 21:11  othauvin
+
+	* Makefile.am: - fix error cause useless call to rpm -q --specfile
+	  (gb sucks)
+	  - also dont put rpm release in cvs tag as the rpm is not part
+	  of software it self
+
+2006-01-10 19:36  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.12
+
+2006-01-10 19:32  othauvin
+
+	* macros.in: - fix typo in RequireS
+
+2006-01-06 14:58  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.11-1mdk
+
+2006-01-06 14:55  rgarciasuarez
+
+	* macros.in: Override _query_all_fmt so rpm -qa (without a --qf
+	  format specification)
+	  returns the same format as with rpm 4.4.2.
+
+2006-01-06 14:49  rgarciasuarez
+
+	* macros.in: Override _changelog_truncate to "3 years ago" (instead
+	  of the default in rpm
+	  4.4.4 which is only one year ago)
+
+2006-01-05 16:33  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.10-1mdk
+
+2006-01-05 16:26  rgarciasuarez
+
+	* macros.in: Add _rpmlock_path to the default macros. That's the
+	  path used for the
+	  transaction fcntl lock. It comes from the rpm 4.4.2 default
+	  macros.
+
+2006-01-04 16:00  gbeauchesne
+
+	* ChangeLog: updates
+
+2006-01-04 14:18  gbeauchesne
+
+	* configure.ac, rpm-mandriva-setup.spec: 1.9-1mdk
+
+2006-01-04 13:43  gbeauchesne
+
+	* find-debuginfo.sh: preserve setuid/setgid permissions when
+	  stripping files for -debug package
+
+2006-01-03 16:21  rgarciasuarez
+
+	* perl.req: Fix typo in comment
+
+2006-01-01 01:28  othauvin
+
+	* find-requires.in: - rpm output to stdout if file exists, so we
+	  have ignore first output in all case and keep the result only if
+	  we are sure rpm exit with 0
+
+2005-12-26 19:15  othauvin
+
+	* macros.in: - Fix PreReq, thanks neoclust to recall me this
+
+2005-12-08 09:52  rgarciasuarez
+
+	* macros.in: Typo fix
+
+2005-10-17 10:37  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.8-1mdk
+
+2005-10-17 10:30  rgarciasuarez
+
+	* perl.req: Ignore perl version requires
+
+2005-10-17 10:25  rgarciasuarez
+
+	* perl.req: Get correctly the Perl dependencies from "use base"
+
+2005-10-11 12:44  rgarciasuarez
+
+	* Makefile.am: Add a --clean option to rpmbuild
+
+2005-10-11 12:11  rgarciasuarez
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: 1.7-1mdk
+
+2005-10-11 11:47  rgarciasuarez
+
+	* find-requires.in: Insert an automatic dependency on libperl.so
+	  when building XS modules.
+	  This fixes the root cause of bugzilla #17967.
+
+2005-10-06 16:19  gbeauchesne
+
+	* ChangeLog: autogenerated
+
+2005-10-06 16:14  gbeauchesne
+
+	* configure.ac, rpm-mandriva-setup.spec: 1.6 (2007 material, use
+	  MDK-2006_0{,-branch} for 2006)
+
+2005-10-06 16:13  gbeauchesne
+
+	* macros.in, rpmrc.in: enable -debug packages for 2007, build with
+	  -fasynchronous-unwind-tables
+	  on x86 and -fexceptions everywhere (including for C code)
+
+2005-10-06 16:08  gbeauchesne
+
+	* Makefile.am: cvstag facility
+
+2005-10-06 16:02  gbeauchesne
+
+	* configure.ac, rpm-mandriva-setup.spec: 1.5.1-1mdk
+
+2005-10-06 15:44  gbeauchesne
+
+	* macros.in: %_lib independent fixes to %py_* macros, use distutils
+
+2005-09-28 19:18  mscherer
+
+	* perl.req: add the proper detection of 'use base qw(Foo::Bar)'
+	  construct
+
+2005-09-22 17:54  othauvin
+
+	* macros.in: - fix py_libdir #18772
+
+2005-08-25 22:52  gbeauchesne
+
+	* configure.ac, rpm-mandriva-setup.spec: 1.5-1mdk
+
+2005-08-25 22:51  gbeauchesne
+
+	* macros.in, rpmrc.in: factor out common compile flags and build
+	  with -D_FORTIFY_SOURCE=2
+
+2005-08-25 22:48  gbeauchesne
+
+	* macros.in: make generation of debug packages work again (aka fix
+	  mdv split + merge from
+	  Conectiva macros)
+
+2005-08-25 22:45  gbeauchesne
+
+	* find-debuginfo.sh: strip shared libs too, really ship with
+	  eu-strip'ed binaries & libs
+
+2005-08-18 20:04  othauvin
+
+	* ChangeLog, rpm-mandriva-setup.spec: - version is 1.4 vi
+	  rpm-mandriva-setup.spec
+
+2005-08-18 19:55  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.3
+
+2005-08-18 17:31  pterjan
+
+	* php.req: Also fix */../* */./* *//*
+
+2005-08-18 16:13  pterjan
+
+	* php.req: Don't requires files accessed with ../
+
+2005-08-16 09:05  gbeauchesne
+
+	* configure.ac, rpm-mandriva-setup.spec: 1.3-1mdk
+
+2005-08-16 08:51  gbeauchesne
+
+	* macros.in: check-multiarch-files: fix invocation and path to the
+	  script as others
+	  (/usr/lib/rpm/check-*), default to not check for multiarch files
+	  in 2006
+
+2005-08-07 09:09  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.2
+
+2005-08-07 08:00  othauvin
+
+	* Makefile.am, find-provides.in, find-requires.in, php.prov,
+	  php.req: - add php-pear auto req/prov from pld (suggested by
+	  oden)
+
+2005-08-03 09:55  othauvin
+
+	* ChangeLog, macros.in: - some macro from connectiva
+
+2005-06-27 15:09  othauvin
+
+	* macros.in: - add %__{chkconfig,service} macros
+
+2005-06-25 07:43  othauvin
+
+	* rpm-mandriva-setup.spec: - requires multiarch utils
+
+2005-06-23 02:29  othauvin
+
+	* ChangeLog, rpm-mandriva-setup.spec: - add requirement for update
+
+2005-06-22 12:00  othauvin
+
+	* ChangeLog, rpm-mandriva-setup.spec: - split for dep
+
+2005-06-17 04:50  othauvin
+
+	* rpmrc.in: < spturtle> can you remove -frename-registers, it might
+	  fix the firefox and kde crashes reported here
+
+2005-06-13 14:05  othauvin
+
+	* rpm-mandriva-setup.spec: typo
+
+2005-06-13 13:50  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.1
+
+2005-06-13 13:44  othauvin
+
+	* macros.in: - provide %_package_i18n (testing)
+	  - %with %without => %_with %_without to not conflict with current
+	  rpm macro
+
+2005-06-08 03:14  othauvin
+
+	* macros.in: - rpmbuild --without section
+	  - fix %with() %without()
+
+2005-06-06 02:23  gbeauchesne
+
+	* find-requires.in, rpm-mandriva-setup.spec: - merge from old ppc64
+	  branch:
+	  * find-requires: handle ppc64 loaders
+
+2005-05-31 02:16  othauvin
+
+	* macros.in: - add %_logdir
+	  - add some macro from conectiva
+
+2005-05-25 12:02  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 1.0
+
+2005-05-25 11:29  othauvin
+
+	* macros.in: - disable automatic gpg key query on server
+
+2005-05-13 09:23  othauvin
+
+	* find-requires.in: - add experimantal ocaml requires
+
+2005-05-13 08:21  othauvin
+
+	* macros.in, rpmrc.in: - do not reload rpm configuration as it
+	  pollute macros parsing
+	  - +k6 on ix86
+
+2005-05-13 04:02  prigaux
+
+	* rpm-spec-mode.el: fix rpm-increase-release-with-macros when mkrel
+	  is used
+
+2005-05-12 07:29  othauvin
+
+	* rpm-mandriva-setup.spec: - add changelog
+
+2005-05-12 07:15  othauvin
+
+	* ChangeLog, configure.ac, macros.in, rpm-mandriva-setup.spec: -
+	  0.8 (fix %_localstatedir)
+
+2005-05-12 06:36  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 0.7 (provide
+	  emacs spec mode)
+
+2005-05-10 10:06  othauvin
+
+	* ChangeLog, configure.ac, rpm-mandriva-setup.spec: - 0.6
+
+2005-05-10 04:03  othauvin
+
+	* macros.in: - %_libexecdir == %_libdir
+
+2005-05-09 10:26  othauvin
+
+	* ChangeLog, Makefile.am: - fix make rpm
+
+2005-05-09 10:25  othauvin
+
+	* rpm-mandriva-setup.spec: - add changelog
+
+2005-05-09 10:16  othauvin
+
+	* configure.ac, make_macrosfiles.sh.in, rpm-mandriva-setup.spec,
+	  rpmrc.in: - handle pentium computer
+
+2005-05-08 15:57  othauvin
+
+	* ChangeLog, Makefile.am, rpm-mandriva-setup.spec, rpmrc.in: - add
+	  make ChangeLog
+	  - 0.4 final
+
+2005-05-08 15:06  othauvin
+
+	* README: - add README
+
+2005-05-06 08:11  othauvin
+
+	* configure.ac, rpm-mandriva-setup.spec: - 0.4
+
+2005-05-06 08:07  othauvin
+
+	* rpmpopt: - fix popt alias
+
+2005-05-06 04:57  othauvin
+
+	* macros.in: build_sysmacrospath take %name if no name
+
+2005-05-03 08:19  othauvin
+
+	* ltmain.sh, rpm-mandriva-setup.spec: - 0.3
+
+2005-05-03 08:06  othauvin
+
+	* Makefile.am, rpm-mandriva-setup.spec, rpm-spec-mode.el, rpmrc.in:
+	  - add emacs mode spec
+	  - update requres
+	  - read /etc/rpm/macros.*
+
+2005-05-01 21:51  othauvin
+
+	* configure.ac, rpm-mandriva-setup.spec: - in way to 0.3
+
+2005-05-01 21:46  othauvin
+
+	* rpm-mandriva-setup.spec: - 0.2
+
+2005-05-01 21:45  othauvin
+
+	* configure.ac, make_macrosfiles.sh.in, rpm-mandriva-setup.spec: -
+	  fix optflags
+
+2005-05-01 00:44  othauvin
+
+	* rpmpopt: - really add rpmpopt
+
+2005-05-01 00:41  othauvin
+
+	* Makefile.am, configure.ac, macros-perarch.in, macros.in,
+	  make_macrosfiles.sh.in, rpmrc.in: - add rpmpopt
+	  - fix optflags in macros
+
+2005-04-29 03:14  othauvin
+
+	* Makefile.am, Makefile.in, brp-compress, brp-strip-static-archive,
+	  configure.ac, http.req, macros.in, magic.prov, magic.req,
+	  perl.prov, perl.req, rpm-mandriva-setup.spec, rpmrc.in: - remove
+	  Makefile.in from cvs
+	  - more scripts
+	  - version is 0.1 (in way)
+	  - use spec-helper at time
+
+2005-04-28 18:16  othauvin
+
+	* Makefile.am, Makefile.in, macros.in, rpmrc.in: - update mkrel
+	  - include rpm rpmrc in our rpmrc
+	  - minor fixes
+
+2005-04-27 02:07  othauvin
+
+	* find-provides.in, find-requires.in: - fix tr call for mono
+	  req/prov
+
+2005-04-26 23:25  othauvin
+
+	* AUTHORS, COPYING, ChangeLog, INSTALL, Makefile.am, Makefile.in,
+	  NEWS, README, brp-compress, brp-strip, brp-strip-comment-note,
+	  configure.ac, filter.sh, find-debuginfo.sh, find-lang.sh,
+	  find-provides.in, find-provides.perl.in, find-requires.in,
+	  install-sh, ltmain.sh, macros-perarch.in, macros.in,
+	  make_macrosfiles.sh.in, rpm-mandriva-setup.spec, rpmrc.in: -
+	  import
+
+2005-04-26 23:25  
+
+	* .: New repository initialized by cvs2svn.
+

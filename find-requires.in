@@ -1,0 +1,280 @@
+#!/bin/bash
+
+#
+# Auto-generate requirements for ELF executables and library
+# sonames, script interpreters, and perl modules.
+#
+
+ulimit -c 0
+
+#
+# --- Set needed to 0 for traditional find-requires behavior.
+needed=1
+if [ X"$3" = Xldd ]; then
+    needed=0
+elif [ X"$3" = Xobjdump ]; then
+    needed=1
+fi
+
+# --- Mandriva Linux specific part
+case "$LD_PRELOAD" in
+    *libfakeroot*)
+	unset LD_PRELOAD
+	;;
+esac
+
+RPM_BUILD_ROOT=$1
+RPM_ARCH=$2
+
+if [ -n "$RPM_BUILD_ROOT" ]; then
+    lib_path_64=$RPM_BUILD_ROOT/usr/X11R6/lib64:$RPM_BUILD_ROOT/usr/lib64:$RPM_BUILD_ROOT/lib64
+    lib_path_32=$RPM_BUILD_ROOT/usr/X11R6/lib:$RPM_BUILD_ROOT/usr/lib:$RPM_BUILD_ROOT/lib
+    LD_LIBRARY_PATH=$lib_path_64:$lib_path_32
+    export LD_LIBRARY_PATH
+fi
+
+
+#
+# --- Grab the file manifest and classify files.
+#filelist=`sed "s/['\"]/\\\&/g"`
+filelist=`sed "s/[]['\"*?{}]/\\\\\&/g"`
+exelist=`echo "$filelist" | xargs -r file | egrep -v ":.* (commands|script) " | \
+	grep ":.*ELF.*executable" | cut -d: -f1`
+scriptlist=`echo "$filelist" | grep -v /usr/doc | grep -v /usr/share/doc | xargs -r file | \
+	egrep ":.* (commands|script)" | cut -d: -f1`
+liblist=`echo "$filelist" | egrep -v "/usr/lib(64)?/gcj/" | xargs -r file | \
+	grep ":.*shared object" | cut -d : -f1`
+ocamllist=`echo "$filelist" | xargs -r file | \
+    grep ":.*Objective caml interface file" | cut -d : -f1`
+phplist=`echo "$filelist" | grep -v /usr/doc | grep -v /usr/share/doc | egrep "\.php$"`
+
+interplist=
+perllist=
+pythonlist=
+tcllist=
+rubygemlist=`echo "$filelist"| grep -e "\.gemspec$" -e "\.rb$" -e "/usr/lib/ruby"`
+
+uniqdeplist=
+
+#
+# --- Alpha does not mark 64bit dependencies
+case `uname -m` in
+  alpha*)	mark64="" ;;
+  *)		mark64="()(64bit)" ;;
+esac
+
+if [ "$needed" -eq 0 ]; then
+#
+# --- Executable dependency sonames.
+  for f in $exelist; do
+    [ -r $f -a -x $f ] || continue
+    lib64=`if file -L $f 2>/dev/null | \
+	grep "ELF 64-bit" >/dev/null; then echo "$mark64"; fi`
+    ldd $f | awk '/=>/ {
+	if ($1 !~ /libNoVersion.so/ && $1 !~ /4[um]lib.so/) {
+	    gsub(/'\''"/,"\\&",$1);
+	    printf "%s'$lib64'\n", $1
+	}
+    }'
+  done | xargs -r -n 1 basename | sort -u | grep -v 'libsafe|libfakeroot'
+
+#
+# --- Library dependency sonames.
+  for f in $liblist; do
+    [ -r $f ] || continue
+    lib64=`if file -L $f 2>/dev/null | \
+	grep "ELF 64-bit" >/dev/null; then echo "$mark64"; fi`
+    ldd $f | awk '/=>/ {
+	if ($1 !~ /libNoVersion.so/ && $1 !~ /4[um]lib.so/) {
+	    gsub(/'\''"/,"\\&",$1);
+	    printf "%s'$lib64'\n", $1
+	}
+    }'
+  done | xargs -r -n 1 basename | sort -u | grep -v 'libsafe|libfakeroot'
+fi
+
+#
+# --- Script interpreters.
+for f in $scriptlist; do
+    [ -r $f -a -x $f ] || continue
+    interp=`head -n 1 $f | grep '^#!' | sed -e 's/^\#\![ 	]*//' | cut -d" " -f1`
+    if [[ "$interp" == *bin/env ]]; then
+	    arg=`head -n 1 $f | grep '^#!' | sed -e 's/^\#\![ 	]*//' | cut -d" " -f2`
+	    interp="`which $arg`"
+    fi
+    case $interp in
+	    # we really don't need to add these dependencies as they're required by
+	    # glibc and therefore guaranteed to be satisfied
+	    */sh|*/bash)
+		    continue
+		    ;;
+	    # we already have dedicated dependency generators for these
+	    */python)
+		    pythonlist="$pythonlist $f"
+		    ;;
+	    */perl)
+		    perllist="$perllist $f"
+		    ;;
+	    */ruby)
+		    rubylist="$rubylist $f"
+		    ;;
+	    *)
+		    interplist="$interplist $interp"
+		    ;;
+    esac
+done
+if [ -n "$interplist" ]; then
+    tmpdeplist=
+    for i in `echo "$interplist" | tr '[:blank:]' \\\n `; do
+        dep=`rpm -qf $i --qf '%{name}\n'` && i=$dep
+	if [[ -z `echo $uniqdeplist $tmpdeplist|grep "$i"` ]]; then
+	    tmpdeplist+="$i\n"
+	fi
+    done
+    echo -n -e $tmpdeplist | sort -u | grep -v 'libsafe|libfakeroot'
+    uniqdeplist="$tmpdeplist"
+fi
+
+#
+# --- Add perl module files to perllist.
+for f in $filelist; do
+    [ -r $f -a "${f%.pm}" != "${f}" ] && perllist="$perllist $f"
+done
+
+#
+# --- Weak symbol versions (from glibc).
+[ -n "$mark64" ] && mark64="(64bit)"
+for f in $liblist $exelist ; do
+    [ -r $f ] || continue
+    lib64=`if file -L $f 2>/dev/null | \
+	grep "ELF 64-bit" >/dev/null; then echo "$mark64"; fi`
+    objdump -p $f | awk 'BEGIN { START=0; LIBNAME=""; needed='$needed'; }
+	/^$/ { START=0; }
+	/^Dynamic Section:$/ { START=1; }
+	(START==1) && /NEEDED/ {
+	    if (needed) {
+		if ("'$lib64'" != "") {
+		    sub(/$/, "()'$lib64'", $2) ;
+		}
+		print $2 ;
+	    }
+	}
+	/^Version References:$/ { START=2; }
+	(START==2) && /required from/ {
+	    sub(/:/, "", $3);
+	    LIBNAME=$3;
+	}
+	(START==2) && (LIBNAME!="") && ($4!="") && (($4~/^GLIBC_*/) || ($4~/^GCC_*/)) {
+	    print LIBNAME "(" $4 ")'$lib64'";
+	}
+    '
+done | sort -u | grep -v 'libsafe|libfakeroot'
+
+# --- OCaml dependency
+if [ -x /usr/bin/ocamlc -a -n "$ocamllist" ]; then
+   version=`ocamlc -v | grep version | awk '{print $6}' | sed -e 's/+/./'`
+   echo "ocaml = $version"
+fi
+
+#
+# --- Perl modules.
+perlmymeta=$( echo $filelist | tr '[:blank:]' \\n | egrep 'doc/[^/]+/MYMETA.(yml|json)$' | head -1 )
+perlmeta=$( echo $filelist | tr '[:blank:]' \\n | egrep 'doc/[^/]+/META.(yml|json)$' | head -1 )
+if [ -n "$perlmymeta" ]; then
+    [ -x @RPMVENDORDIR@/perl.req-from-meta ] && \
+	@RPMVENDORDIR@/perl.req-from-meta $perlmymeta
+elif [ -n "$perlmeta" ]; then
+    [ -x @RPMVENDORDIR@/perl.req-from-meta ] && \
+	@RPMVENDORDIR@/perl.req-from-meta $perlmeta
+else
+    [ -x @RPMVENDORDIR@/perl.req -a -n "$perllist" ] && \
+	echo $perllist | tr '[:blank:]' \\n | @RPMVENDORDIR@/perl.req | grep 'perl([[:upper:]]' | egrep -v '^perl\((Be|FreeBSD|HPUX|Mac|MSDOS|MVS|OS2|Riscos|SGI|Solaris|VMS|Win32|WinNT)::' | sort -u
+fi
+
+#
+# --- If libperl.so exists and if XS modules are found, depend on perl(abi) = <version> and libperl.so
+if [ -n "$perllist" ]; then
+    if perl -V:useshrplib | grep -q true ; then
+	if echo $perllist | grep -q `perl -MConfig -e 'print $Config{archname}'` ; then
+	    f=`perl -MConfig -e 'print $Config{archlib}'`/CORE/libperl.so
+	    lib64=`if file -L $f 2>/dev/null | \
+		grep "ELF 64-bit" >/dev/null; then echo "()$mark64"; fi`
+	    echo libperl.so$lib64
+	fi
+    fi
+fi
+
+#
+# --- Python modules.
+[ -x @RPMLIBDIR@/pythoneggs.py -a -n "$filelist" ] && \
+    echo $filelist | tr '[:blank:]' \\n | @RPMLIBDIR@/pythoneggs.py --requires | sort -u
+
+#
+# --- Tcl modules.
+#[ -x @RPMLIBDIR@/tcl.req -a -n "$tcllist" ] && \
+#    echo $tcllist | tr '[:blank:]' \\n | @RPMLIBDIR@/tcl.req | sort -u
+
+#
+# --- Php modules.
+[ -x @RPMVENDORDIR@/php.req -a -n "$phplist" ] && \
+    echo $phplist | tr '[:blank:]' \\n | @RPMVENDORDIR@/php.req | sort -u
+
+#
+# --- Pkgconfig deps
+[ -x @RPMLIBDIR@/pkgconfigdeps.sh ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/pkgconfigdeps.sh -R | sort -u
+
+
+if [ -n "$LIBTOOLDEP" ]; then
+#
+# --- libtooldep deps
+[ -x @RPMLIBDIR@/libtooldeps.sh ] &&
+    echo "$filelist" | tr '[:blank:]' \\n | @RPMLIBDIR@/libtooldeps.sh -R | sort -u
+
+fi
+
+#
+# --- Ruby gems
+[ -x @RPMLIBDIR@/rubygems.rb -a -n "$rubygemlist" ] &&
+    echo $rubygemlist | tr '[:blank:]' \\n | @RPMLIBDIR@/rubygems.rb --requires | sort -u
+
+#
+# --- .so files.
+for i in `echo $filelist | tr '[:blank:]' "\n" | egrep "(/usr(/X11R6)?)?/lib(|64)/[^/]+\.so$"`; do
+    objd=`objdump -p ${i} | grep SONAME`
+    lib64=`if file -L $i 2>/dev/null | grep "ELF 64-bit" >/dev/null; then echo "(64bit)"; fi` && \
+    if [ -h ${i} -a -n "${objd}" ]; then
+      if [ "$needed" -eq 0 ]; then
+       ldd ${i} \
+       | grep -v "statically linked" \
+       | grep -v "/\(lib\|lib64\)/\(ld\|ld64\|ld-linux.*\)\.so" \
+       | perl -p -e "s/\s+(\S+)\.so.*/devel(\1$lib64)/g"
+      else
+       objdump -p $i | grep -v "\(ld\|ld64\|ld-linux.*\)\.so" \
+                     | awk 'BEGIN { START=0; }
+       /^$/ { START=0; }
+       /^Dynamic Section:$/ { START=1; }
+       (START==1) && /NEEDED/ {
+           sub(/^/, "devel(", $2) ;
+           sub(/\.so.*$/, "'$lib64')", $2) ;
+           print $2 ;
+       }
+       '
+      fi
+    fi
+done | egrep -v 'devel\(linux-gate|linux-vdso32|linux-vdso64|lib(c|pthread|rt)(\(64bit\))?\)' | sort -u
+
+#
+# --- mono requires
+if [ -x /usr/bin/mono-find-requires ]; then
+echo $filelist | tr '[:blank:]' '\n' | /usr/bin/mono-find-requires
+fi
+
+#
+# haskell requires
+if [ -x /usr/bin/haskell-find-requires ]; then
+echo $filelist | tr '[:blank:]' '\n' | /usr/bin/haskell-find-requires
+fi
+
+
+exit 0

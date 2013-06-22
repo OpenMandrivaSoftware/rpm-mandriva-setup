@@ -1,0 +1,292 @@
+Version 1.140 - 13 March 2012, by Per Øyvind Karlsen
+
+- perl.prov: generate perl(abi) provides
+
+Version 1.139 -  3 March 2012, by Per Øyvind Karlsen
+
+- perl.prov: skip modules with lower-case names
+
+Version 1.138 -  2 March 2012, by Per Øyvind Karlsen
+
+- perl.req: generate perl(abi) >= <version> dependencies for perl modules
+  that's not perl extensions
+- php.req: fix warning
+	'Having no space between pattern and following word is deprecated1'
+- php.{req,prov}: fix passing files as arguments
+- php.req: print warning in stead of dying on problems reading files
+- kill off dead macro.in & build.macros.in
+- kill rpmeval
+- drop dead tests
+- perl.req: move perl(abi) dependency from find-requires so that it may
+  be picked up by the internal dependency generator
+- perl.req: skip any modules not starting with upper case letters to get
+  consistent behaviour for internal dependency generator
+
+Version 1.137 - 23 February 2012, by Per Øyvind Karlsen
+
+- perl.req: avoid emitting empty perl() module deps (@rpm.org)
+- perl.prov: skip over =for ... perlpod construct (rhbz#477516, @rpm.org)
+- perl.prov: handle multiline split package defs better (rhbz#214496, @rpm5.org)
+- perl.prov: do not emit perl(main) (rhbz#177960, @rpm5.org)
+- perl.{req,req-from-meta,prov}: warn about unreadable files (@rpm.org)
+- perl.req: improved handling of here-docs and POD sections (@rpm5.org)
+- perl.req: fix 'Failed dependencies: perl(\s+) is needed by rpm-build' (@rpm5)
+- perl.req: fix 'use base qw($isa);' matching (@rpm5.org)
+- perl.req: skip multiline qw() sections a bit better (@rpm5.org)
+- perl.req: bugfix for statements like:
+	use base qw(DBIx::SearchBuilder RT::Base); (@rpm5.org)
+- perl.req: handle statements like:
+	use base qw( Class::Accessor::Chained::Fast ); (@rpm5.org)
+- perl.{prov,req}: skip new-fangled head[34] while gerenerating deps (@rpm5.org)
+- perl.req: allow for "our" in from front of $RPM_Requires (@rpm5.org)
+- perl.req: avoid extracting bogus deps in q{} sections (rhbz#198033, @rpm5.org)
+- keep lower-case perl provides in automatic extraction (from Mageia)
+- extract perl requires from MYMETA.yml/MYMETA.json when present (from Mageia)
+- ignore files not supported for perl.req-from-meta
+- modify perl.req-from-meta to accept list of files read from stdin so that
+  it potentially may be used with rpm's internal dependency generator
+- get rid of extra newlines printed by perl dependency generator which will
+  confuse rpm's internal dependency generator
+
+Version 1.136 - 23 January 2012, by Per Øyvind Karlsen
+
+- fix breakage with automake 1.11.2
+- change to strict version requires on perl(abi) for perl extensions as ABI
+  backward compatibility cannot be guaranteed
+
+Version 1.135 - 11 December 2011, by Per Øyvind Karlsen
+
+- "resolve" /bin/env foo interpreter to actual path, rather than generating
+  dependencies on coreutils, should trim off ~800 dependencies more
+
+Version 1.134 - 11 December 2011, by Per Øyvind Karlsen
+
+- drop automatically generated dependencies on interpreters we either don't
+  need dependencies on or that we have other dedicated dependency generators
+  for making them duplicate, reducing another ~5K packages' dependencies at
+  next rebuild.
+- drop automatically generated rtld(GNU_HASH) dependencies, it's been provided
+  by glibc for five years now and can safely be assumed that there's no longer
+  any need for it, reducing ~5K packages' dependency on it during next rebuild.
+
+Version 1.133 - 24 November 2011, by Per Øyvind Karlsen
+
+- drop generating dependencies on packages for triggers, these will be fired
+  when packages gets installed at later time anyways
+- move remaining macros to rpm package
+
+Version 1.132 - 17 November 2011, by Per Øyvind Karlsen
+
+- merge scripts and parts of macros from rpm-manbo-setup package
+- drop brp-compress, brp-strip, brp-strip-comment-note & brp-strip-static-archive
+
+Version 1.131 - 11 November 2011, by Per Øyvind Karlsen
+
+- drop python macros that's now part of rpm upstream.
+- drop using our own find-lang.pl as well, use find-lang.sh distributed with
+  rpm in stead.
+- drop using our own version of find-debuginfo.sh, our changes has now been
+  merged upstream.
+
+Version 1.130 - 14 July 2011, by Per Øyvind Karlsen
+
+- add a EXCLUDE_FROM_FULL_STRIP environment variable to find-debuginfo.sh, so
+  that we can exclude files from being completely stripped, but for their
+  debugging symbols.
+
+Version 1.129 - 17 June 2011, by Per Øyvind Karlsen
+
+- only generate platform macros if explicitly enabled
+- generate a perl(abi) = <version> provide when libperl.so is found
+- make perl packages require perl(abi) >= <version> rather than perlapi-<version>
+- use python, ruby, kernel module, pkgconfig & gstreamer dependency extractors
+  from rpm5.org upstream
+
+Version 1.128 - 27 May 2011, by Per Øyvind Karlsen
+
+- remove dead perl-base dependency and broken epoch hack polluting with tons of
+  errors from sed
+
+Version 1.127 - 17 May 2011, by Funda Wang
+
+- add desktop-file.prov and fontconfig.prov from rpm.org
+
+Version 1.126 -  9 May 2011, by Per Øyvind Karlsen
+
+- revert _host full triplet, due to lack of testing and breakage (#63234)
+
+Version 1.125 - 5 May 2011, by Funda Wang
+- fix script file filtering, according to latest changes in file command
+
+Version 1.124 - 5 May 2011, by Funda Wang
+- fix trigger requirements helpers
+
+Version 1.123 -  4 May 2011, by Per Øyvind Karlsen
+
+- fix _host to have full host triplet, in order to unbreak arm
+  (from Arnaud Patard)
+- merge updated pkgconfigdeps.sh script from mageia
+- drop autogenerated dependencies on multiarch-utils as it's now merged with rpm
+- autogenerate dependencies on various packages required for triggers
+  (from Funda Wang)
+- strip kernel modules also even if executable bit isn't set
+
+Version 1.122 - 19 April 2011, by Per Øyvind Karlsen
+
+- pick up python(abi) version from python path only when adding requires
+
+Version 1.121 -  5 April 2011, by Per Øyvind Karlsen
+
+- revert compiler optimization disablers now fixed in gcc 4.6.0 (#62900)
+
+Version 1.120 - 31 March 2011, by Per Øyvind Karlsen
+
+- revert removal of %with macros which broke stuff..
+
+Version 1.119 - 30 March 2011, by Per Øyvind Karlsen
+
+- temporarily disable certain compiler optimizations on x86_64 (#62900)
+- build with -fPIC on x86_64 (#62900)
+- start on dropping macros and functionality that's either deprecated or merged
+  with rpm5 upstream since, first step in phasing out rpm-setup...
+
+Version 1.118 - 13 February 2011, by Funda Wang
+- really fix icon cache macro
+
+Verison 1.117 - 11 February 2011, by Per Øyvind Karlsen
+
+- start on dropping macros and functionality that's either deprecated or merged
+  with rpm5 upstream since, first step in phasing out rpm-setup...
+
+Version 1.117 - 11 February 2011, by Per Øyvind Karlsen
+
+- reenable %clean_icon_cache & %update_icon_cache macros so that they can be
+  used in rpm5 file triggers (#62469)
+
+Version 1.116 - 11 February 2011, by Per Øyvind Karlsen
+
+- replace EVR separator characters (':' & '-') in kmod provides with '_' so
+  that kmod() provides gets valid EVR (#62472)
+
+Version 1.115 - 25 Januar 2011, by Per Øyvind Karlsen
+
+- fix pythonegg dependencies to always be lower case (#62883)
+
+Version 1.114 - 13 December 2010, by Per Øyvind Karlsen
+- drop our own re-definition of %_query_all_fmt in favor of upstream default
+  to get disttag, distepoch & arch in query results.
+- only add runtime dependencies in rubygems.rb (Rémy Clouard)
+
+Version 1.113 - 2 November 2010, by Funda Wang
+- find gstreamer provides
+
+Version 1.112 - 1 November 2010, by Per Øyvind Karlsen
+- enable python egg provides/requires.
+
+Version 1.111 - 30 October 2010, by Anssi Hannula
+- generate requires on "python(abi) = x.y" instead of "python >= x.y" for
+  python modules to properly handle the strict dependency
+- remove runtime dependencies from %py_requires as they are now handled
+  automatically
+
+Version 1.110 - 18 October 2010, by Per Øyvind Karlsen
+- fix warning from rubygems.rb
+- drop %gem_unpack, equivalent behaviour has been implemented in %setup now
+ 
+Version 1.109 - 16 October 2010, by Per Øyvind Karlsen
+- don't install dependencies for gems when using %gem_install
+- fix build with rpm 5.3
+
+Version 1.108 - 16 October 2010, by Per Øyvind Karlsen
+- add gem_helper.rb and it's corresponding macros %gem_unpack, %gem_build &
+  gem_install for simplifying & streamlining ruby gem packaging.
+ 
+Version 1.107 -  9 September 2010, by Per Øyvind Karlsen
+- enable automatic dependency extraction for ruby gems
+
+Version 1.106 - 16 July 2010, by Jerome Quelin
+- extract perl module version when $Full::Package::VERSION is set
+
+Version 1.105 - 14 July 2010, by Jerome Quelin
+- support to extract perl runtime requires from meta spec 2
+
+Version 1.104 - 27 April 2010, by Christophe Fergeau
+- revert previous '-g' addition when stripping shared libraries since it 
+  increases shared library sizes by 10 to 20% for no good reason
+
+Version 1.103 - 16 April 2010, by Per Øyvind Karlsen
+- strip shared libraries with the '-g' option
+
+Version 1.102 -  8 April 2010, by Michael Scherer
+- do not requires python 2.X branch rpm for python 3.X modules, 
+  requires instead python 3.X interpreter
+
+Version 1.101 - 26 March 2010, by Jerome Quelin
+- fix find-requires to call perl.req-from-meta with the correct meta
+  file when there are multiple meta file in the package
+
+Version 1.100 - 14 March 2010, by Jerome Quelin
+- fix find-requires to look for correct meta.yml before calling
+  perl.req-from-meta
+- make perl.prov skip comment lines
+
+Version 1.99 -  9 March 2010, by Per Øyvind Karlsen
+- allow for for only stripping files without creating debug package contents by
+  setting DISABLE_DEBUG environment variable.
+
+Version 1.98 -  5 March 2010, by Per Øyvind Karlsen
+- Update find-debuginfo.sh from upstream
+- new script: perl.req-from-meta (jquelin)
+
+Version 1.97 - 12 December 2009, by Anssi Hannula
+- fix package build when the debug package is empty (regression introduded in
+  1.96)
+
+Version 1.96 - 10 December 2009, by Anssi Hannula
+- fix perl.prov to assign versions to provides when the version is declared
+  with 'our' or 'my' keyword, or when it is prepended with code
+  (Jérôme Quelin)
+- replace %sunsparc with %sparc & %sparcx (from rpm5.org, Per Øyvind Karlsen)
+- support ELF executables only as a.out has been deprecated since ages
+  ago (fixes objdump 'File format not recognized' errors) (Per Øyvind Karlsen)
+- don't try finding debug files in buildroot when there's none
+  (Per Øyvind Karlsen)
+
+Version 1.95 - 25 September 2009, by Olivier Blin
+- MIPS and ARM support (from Arnaud Patard):
+  o add mipsel support
+  o introduce CANONTARGETGNU, to be able to use -gnueabi for ARM
+  o add arm support and use -gnueabi instead of -gnu
+
+Version 1.94 - 8 August 2009, by Anssi Hannula
+- update perl_convert_version to keep alphabetic tail in version number
+  (Luca Berra)
+
+Version 1.93 - 28 July 2009, by Christophe Fergeau
+- update perl_convert_version macro (Jérôme Quelin)
+
+Version 1.92 - 9 July 2009, by Christophe Fergeau 
+- making sure automatic provides & requires for perl package are using the
+  new macro %perl_convert_version (jquelin)
+- rpm5 fixes (peroyvind)
+
+Version 1.91 - 3 February 2009, by Christophe Fergeau
+- build.macros.in
+  o add new perl_convert_version macro to convert cpan version to rpm version
+- git-repository--after-tarball:
+  o commit the tarball with user "unknown author <cooker@mandrivalinux.org>"
+  o commit the tarball using the tarball's modification time
+
+Version 1.90 - 29 January 2009, by Pixel
+
+- call patch with -U (aka --unified-reject-files)
+
+Version 1.89 - 29 January 2009, by Pixel
+
+- when %_with_git_repository is set, define %_after_setup and %_patch to use
+  the new scripts git-repository--after-tarball and git-repository--apply-patch
+
+Version 1.88 - 7 January 2009, by Christophe Fergeau
+
+- fix ugly warning during invocation of php.req
+- RPM5 fixes 

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+CONFIGURE_TOP="${1:-.}"
+if [ -e $CONFIGURE_TOP/configure ] && grep -q -F '$deplibs $compiler_flags' $CONFIGURE_TOP/configure; then
+  echo "Fixing libtool inside configure to pass -Wl,xxx options before libraries"
+
+  # a similar patch has been applied in libtool in libtool package (#47273)
+  # but this works even if autoreconf is not called
+
+  sed -i \
+   -e 's,$deplibs $compiler_flags,$compiler_flags $deplibs,' \
+   -e 's,$deplibs $postdep_objects $compiler_flags,$compiler_flags $deplibs $postdep_objects,' \
+   $CONFIGURE_TOP/configure
+fi
+

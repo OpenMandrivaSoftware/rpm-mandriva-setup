@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+
+# applies patch:
+# --- ltmain.sh.pix       2008-05-23 13:51:52.000000000 +0200
+# +++ ltmain.sh   2008-05-23 13:52:16.000000000 +0200
+# @@ -1948,6 +1948,11 @@
+#        fi
+#      done # argument parsing loop
+#  
+# +    if test "$module" = yes ; then
+# +       # [Manbo-labs] dropping ld option "--no-undefined" which is wrong for plugins
+# +       linker_flags=`echo "X $linker_flags" | $Xsed -e 's/ --no-undefined//'`
+# +       compiler_flags=`echo "X $compiler_flags" | $Xsed -e 's/ -Wl,--no-undefined//'`
+# +    fi
+# +
+#      if test -n "$prev"; then
+#        $echo "$modename: the \`$prevarg' option requires an argument" 1>&2
+#        $echo "$help" 1>&2
+
+# a similar patch has been applied in ltmain.sh in libtool package
+# but this works even if autoreconf is not called
+
+foreach my $ltmain ('ltmain.sh', glob("*/ltmain.sh")) {
+    open(my $F, '<', $ltmain) or next;
+
+    print "Modifying $ltmain underlinking for plugins (cf http://wiki.mandriva.com/en/Underlinking)\n";
+
+    open(my $G, '>', "$ltmain.new") or exit;
+    while (<$F>) {
+	print $G $_;
+
+	if ($_ eq "    done # argument parsing loop\n") {
+	    $modified = 1;
+	    print $G <<'EOF';
+
+    if test "$module" = yes ; then
+    	linker_flags=`echo "X $linker_flags" | $Xsed -e 's/ --no-undefined//'`
+    	compiler_flags=`echo "X $compiler_flags" | $Xsed -e 's/ -Wl,--no-undefined//'`
+    fi
+EOF
+	}
+    }
+
+    rename $ltmain, "$ltmain.drop" 
+      and rename "$ltmain.new", $ltmain or print STDERR "modifying $ltmain failed: $!\n";
+}
+

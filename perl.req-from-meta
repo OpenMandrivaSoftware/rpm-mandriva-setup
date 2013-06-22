@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use JSON qw{ from_json };
+use YAML qw{ Load      };
+
+if ("@ARGV") {
+  foreach (@ARGV) {
+    next if !/META\.(yml|json)$/;
+    process_file($_);
+  }
+} else {
+
+  # notice we are passed a list of filenames NOT as common in unix the
+  # contents of the file.
+
+  foreach (<STDIN>) {
+    chomp $_;
+    next if !/META\.(yml|json)$/;
+    process_file($_) if -f $_;
+  }
+}
+
+sub process_file {
+  
+  my ($path) = @_;
+  
+  # slurp the file
+  if (!open(FILE, $path)) {
+    warn("$0: Warning: Could not open file '$path' for reading: $!\n");
+    return;
+  }
+  my $data = do { local $/; <FILE> };
+  close FILE;
+
+  # parse meta - either yaml or json
+  my $meta = $path =~ /\.yml$/
+      ? Load( $data )
+      : from_json( $data );
+
+  # dump the requires with their version
+  my $requires = $meta->{"meta-spec"}{version} >= 2
+      ? $meta->{prereqs}{runtime}{requires}
+      : $meta->{requires};
+  foreach my $module ( sort keys %$requires ) {
+      next if $module eq 'perl'; # minimum perl version
+      my $version = $requires->{$module};
+      if ( $version == 0 ) {
+          print "perl($module)\n";
+      } else {
+          my $v = qx{ rpm --eval '%perl_convert_version $version' };
+          chomp($v);
+          print "perl($module) >= $v\n";
+      }
+  }
+}
+
+exit 0;
+
+=head1 NAME
+
+perl.req-from-meta - extract requires from meta file
+
+=head1 SYNOPSIS
+
+    $ perl.req-from-meta /path/to/META.yml
+    $ perl.req-from-meta /path/to/META.json
+
+=head1 DESCRIPTION
+
+This script will extract Perl requirements from the distribution meta
+file. For each such requires, it'll convert the minimum version to
+follow mandriva perl versioning (using C<%perl_convert_version>), and
+print them as:
+
+    perl(Foo::Bar)
+    perl(App::Frobnizer) >= 1.23.456
+
+Minimum perl version are skipped.

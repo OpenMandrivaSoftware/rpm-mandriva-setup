@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -e ltmain.sh ]; then
+   echo "Fixing libtool's ltmain.sh to prevent overlinking (cf http://wiki.mandriva.com/en/Overlinking)"
+
+   # a similar patch has been applied in ltmain.sh in libtool package
+   # but this works even if autoreconf is not called
+
+   mv ltmain.sh ltmain.sh.orig
+   echo link_all_deplibs=no > ltmain.sh
+   cat ltmain.sh.orig >> ltmain.sh
+   
+   sed -i -s 's/link) libs="$deplibs %DEPLIBS% $dependency_libs"/link) libs="$deplibs %DEPLIBS%"/' ltmain.sh
+fi
